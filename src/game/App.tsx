@@ -369,7 +369,7 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
         <Row label={t("music")}><Pill on={g.music} onClick={() => g.set({ music: true })}>{t("on")}</Pill><Pill on={!g.music} onClick={() => g.set({ music: false })}>{t("off")}</Pill></Row>
         <div className="border-b-2 py-3">
           <p className="mb-2 font-bold">{t("meterStyle")}</p>
-          <div className="grid grid-cols-4 gap-2">{METERS.map((m) => <Pill key={m} on={g.meter === m} onClick={() => g.set({ meter: m })}>{t(m)}</Pill>)}</div>
+          <div className="grid grid-cols-2 gap-2">{METERS.map((m) => <Pill key={m} on={g.meter === m} onClick={() => g.set({ meter: m })}>{t(m)}</Pill>)}</div>
         </div>
         <p className="py-3 text-sm text-muted-foreground">{t("privacy")}</p>
       </div>
