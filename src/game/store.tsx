@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { STRINGS, type Lang, type StrKey } from "./i18n";
+import { STRINGS, isLang, type Lang, type StrKey } from "./i18n";
 import type { MicStatus } from "./mic";
 import { BattleMusic, shouldPlayMusic } from "./music";
 
@@ -63,7 +63,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Settings>;
         // Entitlements are never trusted from local storage; they must come from a verified store.
-        setS({ ...DEFAULTS, ...parsed, entitlements: [], best: { ...DEFAULTS.best, ...parsed.best } });
+        setS({ ...DEFAULTS, ...parsed, lang: isLang(parsed.lang) ? parsed.lang : DEFAULTS.lang, music: typeof parsed.music === "boolean" ? parsed.music : DEFAULTS.music, entitlements: [], best: { ...DEFAULTS.best, ...parsed.best } });
       }
     } catch {}
     navigator.permissions

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Lock, Mic, MicOff, Settings as Cog, ShoppingBag, Trophy, Users, Globe, Gauge, Volume2, VolumeX, Zap, Dumbbell, Bot, Check, Crown } from "lucide-react";
 import { GameProvider, useGame, type MeterStyle } from "./store";
-import { CHARACTERS, getChar, isOwned, type Character } from "./characters";
+import { CHARACTERS, getChar, isOwned, characterName, type Character } from "./characters";
+import { LanguageSelect } from "./LanguageSelect";
 import { Avatar, CharTile, GameButton, Screen, Waves } from "./ui";
 import { Round } from "./Round";
 import { Meter } from "./Meters";
@@ -46,8 +47,8 @@ function Splash({ onDone }: { onDone: () => void }) {
   return (
     <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden">
       <div className="flex w-full max-w-lg items-end justify-between px-2">
-        <div className="anim-slide-l relative"><Waves color="var(--ali)" /><Avatar c={ali} size={170} anim={stage >= 1 ? "anim-shake" : ""} /></div>
-        <div className="anim-slide-r relative"><Waves color="var(--aicha)" /><Avatar c={aicha} size={170} anim={stage >= 1 ? "anim-shake" : ""} flip /></div>
+        <div className="anim-slide-l relative"><Waves color="var(--ali)" /><Avatar c={ali} size={170} shouting={stage >= 1} anim={stage >= 1 ? "anim-shake" : ""} /></div>
+        <div className="anim-slide-r relative"><Waves color="var(--aicha)" /><Avatar c={aicha} size={170} shouting={stage >= 1} anim={stage >= 1 ? "anim-shake" : ""} flip /></div>
       </div>
       {stage >= 1 && <div className="anim-popin bg-vs title-white -mt-6 grid size-24 place-items-center rounded-full border-4 border-ink text-5xl">VS</div>}
       {stage >= 2 && (
@@ -56,7 +57,7 @@ function Splash({ onDone }: { onDone: () => void }) {
           <p className="title-white mt-2 text-xl">{t("tagline")}</p>
         </div>
       )}
-      <button onClick={onDone} className="btn-game bg-card absolute end-4 top-4 px-4 py-2 text-base">{t("skip")}</button>
+      <GameButton tone="ali" onClick={onDone} className="absolute end-4 top-4 text-base">{t("skip")}</GameButton>
     </div>
   );
 }
@@ -70,14 +71,14 @@ function Menu({ go }: { go: (v: View) => void }) {
   const micIcon = g.mic === "granted" ? <Mic className="size-4" /> : <MicOff className="size-4" />;
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-lg flex-col px-4 pb-6 pt-4">
-      <div className="flex items-center justify-between gap-2 text-sm font-bold">
+      <div className="grid grid-cols-2 items-center gap-2 text-sm font-bold">
         <span className="card-game flex items-center gap-2 px-3 py-1.5"><img src={me.image} alt="" className="size-6" /> {t("guest")}</span>
         <span className={`card-game flex items-center gap-1 px-3 py-1.5 ${g.mic === "granted" ? "text-ali" : g.mic === "denied" ? "text-destructive" : "text-muted-foreground"}`}>
           {micIcon}{g.mic === "granted" ? t("micOk") : g.mic === "denied" ? t("micNo") : t("micUnknown")}
         </span>
-        <div className="flex gap-2">
+        <div className="col-span-2 flex justify-end gap-2">
           <button aria-label={t("sound")} onClick={() => g.set({ sound: !g.sound })} className="btn-game bg-card grid size-10 place-items-center rounded-full">{g.sound ? <Volume2 className="size-5" /> : <VolumeX className="size-5" />}</button>
-          <button aria-label={t("language")} onClick={() => g.set({ lang: g.lang === "en" ? "ar" : "en" })} className="btn-game bg-card grid h-10 place-items-center rounded-full px-3 text-sm">{g.lang === "en" ? "عربي" : "EN"}</button>
+          <LanguageSelect compact />
         </div>
       </div>
 
@@ -103,7 +104,7 @@ function Menu({ go }: { go: (v: View) => void }) {
         {([["chars", Crown, t("characters")], ["meters", Gauge, t("meters")], ["leader", Trophy, t("leaderboard")], ["shop", ShoppingBag, t("shop")], ["settings", Cog, t("settings")]] as const).map(([v, I, l]) => (
           <button key={v} onClick={() => { sfx.tap(g.sound); go(v); }} className="flex flex-col items-center gap-1">
             <span className="btn-game bg-card grid size-14 place-items-center rounded-2xl"><I className="size-6 text-ink" /></span>
-            <span className="title-white text-xs">{l}</span>
+            <span className="title-white w-full break-words text-center text-[10px] leading-tight">{l}</span>
           </button>
         ))}
       </div>
@@ -122,7 +123,7 @@ function CharSelect({ onBack }: { onBack: () => void }) {
       <CharTile c={preview}>
         <div className="flex flex-col items-center py-4">
           <Avatar c={preview} size={190} />
-          <p className="title-white mt-1 text-3xl">{preview.name[g.lang]}</p>
+          <p className="title-white mt-1 text-3xl">{characterName(preview, g.lang)}</p>
         </div>
       </CharTile>
       <div className="my-4">
@@ -145,7 +146,7 @@ function CharSelect({ onBack }: { onBack: () => void }) {
                   {c.tier === "free" ? t("free") : own ? t("owned") : t("premium")}
                 </span>
                 {!own && <Lock className="absolute bottom-8 end-2 size-5 text-card" />}
-                <p className="title-white truncate px-1 pb-1 text-center text-sm">{c.name[g.lang]}</p>
+                <p className="title-white truncate px-1 pb-1 text-center text-sm">{characterName(c, g.lang)}</p>
               </CharTile>
             </button>
           );
@@ -220,7 +221,7 @@ function Single({ onBack }: { onBack: () => void }) {
   const [key, setKey] = useState(0);
   const me = getChar(g.charId);
   const opp = getChar(me.id === "robo" ? "ali" : "robo");
-  const finish = (r: RoundResult) => { setRes(r); setAi(aiOpponentScore(diff!)); if (r.valid) g.recordBest("single", r.peak); };
+  const finish = (r: RoundResult) => { if (!diff) return; setRes(r); setAi(aiOpponentScore(diff)); if (r.valid) g.recordBest("single", r.peak); };
   const again = () => { setRes(null); setKey((k) => k + 1); };
   return (
     <Screen title={t("vsAI")} onBack={onBack}>
@@ -237,7 +238,7 @@ function Single({ onBack }: { onBack: () => void }) {
       ) : !res.valid ? (
         <NoScream onRetry={again} />
       ) : (
-        <Results a={res.peak} b={ai} aName={t("you")} bName={`${opp.name[g.lang]} (${t("aiLabel")})`} aChar={me} bChar={opp} onRematch={again} onMenu={onBack} />
+        <Results a={res.peak} b={ai} aName={t("you")} bName={`${characterName(opp, g.lang)} (${t("aiLabel")})`} aChar={me} bChar={opp} onRematch={again} onMenu={onBack} />
       )}
     </Screen>
   );
@@ -341,7 +342,7 @@ function Shop({ onBack }: { onBack: () => void }) {
         {premium.map((c) => (
           <CharTile key={c.id} c={c}>
             <img src={c.image} alt={c.name.en} loading="lazy" className="aspect-square w-full object-contain p-2" />
-            <p className="title-white px-2 text-center text-lg">{c.name[g.lang]}</p>
+            <p className="title-white px-2 text-center text-lg">{characterName(c, g.lang)}</p>
             <div className="p-2"><button disabled className="btn-game bg-card w-full py-2 text-sm">{g.t("needsBackend")}</button></div>
           </CharTile>
         ))}
@@ -355,16 +356,17 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
   const g = useGame();
   const { t } = g;
   const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
-    <div className="flex items-center justify-between gap-3 border-b-2 py-3 last:border-0"><span className="font-bold">{label}</span><div className="flex gap-2">{children}</div></div>
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 py-3 last:border-0"><span className="font-bold">{label}</span><div className="flex gap-2">{children}</div></div>
   );
   const Pill = ({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) => (
-    <button onClick={onClick} className={`btn-game px-3 py-1.5 text-sm ${on ? "bg-sun-grad" : "bg-card"}`}>{children}</button>
+    <GameButton tone={on ? "sun" : "ali"} onClick={onClick} className="min-w-0 break-words px-2 py-1.5 text-sm">{children}</GameButton>
   );
   return (
     <Screen title={t("settings")} onBack={onBack}>
       <div className="card-game px-4">
-        <Row label={t("language")}><Pill on={g.lang === "en"} onClick={() => g.set({ lang: "en" })}>English</Pill><Pill on={g.lang === "ar"} onClick={() => g.set({ lang: "ar" })}>العربية</Pill></Row>
+        <div className="border-b-2 py-3"><p className="mb-2 font-bold">{t("language")}</p><LanguageSelect /></div>
         <Row label={t("sound")}><Pill on={g.sound} onClick={() => g.set({ sound: true })}>{t("on")}</Pill><Pill on={!g.sound} onClick={() => g.set({ sound: false })}>{t("off")}</Pill></Row>
+        <Row label={t("music")}><Pill on={g.music} onClick={() => g.set({ music: true })}>{t("on")}</Pill><Pill on={!g.music} onClick={() => g.set({ music: false })}>{t("off")}</Pill></Row>
         <div className="border-b-2 py-3">
           <p className="mb-2 font-bold">{t("meterStyle")}</p>
           <div className="grid grid-cols-4 gap-2">{METERS.map((m) => <Pill key={m} on={g.meter === m} onClick={() => g.set({ meter: m })}>{t(m)}</Pill>)}</div>

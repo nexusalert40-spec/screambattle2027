@@ -97,7 +97,7 @@
   }
 }
 
-@utility font-display { font-family: var(--font-display); letter-spacing: 0.01em; }
+@utility font-display { font-family: var(--font-display); letter-spacing: 0; }
 
 @utility title-pop {
   font-family: var(--font-display);
@@ -157,3 +157,11 @@
 @utility anim-slide-l { animation: slide-l 0.7s cubic-bezier(.2,1.2,.4,1) both; }
 @utility anim-slide-r { animation: slide-r 0.7s cubic-bezier(.2,1.2,.4,1) both; }
 @utility anim-flicker { animation: flicker 0.15s ease-in-out infinite; transform-origin: top; }
+
+button, select { overflow-wrap: anywhere; }
+html[lang="ur"] { --font-sans: "Noto Sans Arabic", sans-serif; --font-display: "Noto Sans Arabic", sans-serif; }
+html[lang="zh"] { --font-sans: "Noto Sans SC", sans-serif; --font-display: "Noto Sans SC", sans-serif; }
+html[lang="ru"] { --font-display: "Nunito", sans-serif; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
