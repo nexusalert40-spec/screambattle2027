@@ -1,12 +1,14 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { STRINGS, type Lang, type StrKey } from "./i18n";
+import { STRINGS, isLang, type Lang, type StrKey } from "./i18n";
 import type { MicStatus } from "./mic";
+import { BattleMusic, shouldPlayMusic } from "./music";
 
 export type MeterStyle = "rpm" | "rocket" | "tmotor" | "digital";
 
 interface Settings {
   lang: Lang;
   sound: boolean;
+  music: boolean;
   meter: MeterStyle;
   charId: string;
   entitlements: string[];
@@ -15,6 +17,7 @@ interface Settings {
 const DEFAULTS: Settings = {
   lang: "en",
   sound: true,
+  music: true,
   meter: "rpm",
   charId: "ali",
   entitlements: [],
@@ -28,12 +31,31 @@ interface Ctx extends Settings {
   t: (k: StrKey) => string;
   mic: MicStatus;
   setMic: (m: MicStatus) => void;
+  setMeasuring: (on: boolean) => void;
 }
 const GameCtx = createContext<Ctx | null>(null);
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [s, setS] = useState<Settings>(DEFAULTS);
   const [mic, setMic] = useState<MicStatus>("unknown");
+  const [measuring, setMeasuring] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [musicPlayer] = useState(() => new BattleMusic());
+
+  useEffect(() => {
+    const unlock = () => { void musicPlayer.unlock().catch(() => {}); };
+    const visibility = () => setVisible(!document.hidden);
+    window.addEventListener("pointerdown", unlock);
+    window.addEventListener("keydown", unlock);
+    document.addEventListener("visibilitychange", visibility);
+    return () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+      document.removeEventListener("visibilitychange", visibility);
+      musicPlayer.close();
+    };
+  }, [musicPlayer]);
+  useEffect(() => musicPlayer.setPlaying(shouldPlayMusic(s.music, measuring, visible)), [s.music, measuring, visible, musicPlayer]);
 
   useEffect(() => {
     try {
@@ -41,7 +63,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Settings>;
         // Entitlements are never trusted from local storage; they must come from a verified store.
-        setS({ ...DEFAULTS, ...parsed, entitlements: [], best: { ...DEFAULTS.best, ...parsed.best } });
+        setS({ ...DEFAULTS, ...parsed, lang: isLang(parsed.lang) ? parsed.lang : DEFAULTS.lang, music: typeof parsed.music === "boolean" ? parsed.music : DEFAULTS.music, entitlements: [], best: { ...DEFAULTS.best, ...parsed.best } });
       }
     } catch {}
     navigator.permissions
@@ -52,7 +74,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.lang = s.lang;
-    document.documentElement.dir = s.lang === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = s.lang === "ar" || s.lang === "ur" ? "rtl" : "ltr";
   }, [s.lang]);
 
   const persist = (n: Settings) => {
@@ -66,7 +88,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setS((o) => { if (score <= o.best[mode]) return o; const n = { ...o, best: { ...o.best, [mode]: score } }; persist(n); return n; }), []);
   const t = useCallback((k: StrKey) => STRINGS[s.lang][k], [s.lang]);
 
-  return <GameCtx.Provider value={{ ...s, set, recordBest, t, mic, setMic }}>{children}</GameCtx.Provider>;
+  return <GameCtx.Provider value={{ ...s, set, recordBest, t, mic, setMic, setMeasuring }}>{children}</GameCtx.Provider>;
 }
 
 export function useGame() {

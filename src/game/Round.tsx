@@ -22,13 +22,15 @@ export function Round({ label, char, onDone, autoStart }: { label: string; char:
   const mic = useRef<MicAnalyzer | null>(null);
   const alive = useRef(true);
 
-  useEffect(() => { alive.current = true; return () => { alive.current = false; mic.current?.close(); }; }, []);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; mic.current?.close(); g.setMeasuring(false); }; }, []);
   useEffect(() => { if (autoStart && phase === "ready") start(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function start() {
-    if (!MicAnalyzer.supported()) { g.setMic("unsupported"); setErr(t("micUnsupported")); setPhase("error"); return; }
+    g.setMeasuring(true);
+    if (!MicAnalyzer.supported()) { g.setMeasuring(false); g.setMic("unsupported"); setErr(t("micUnsupported")); setPhase("error"); return; }
     const m = new MicAnalyzer();
-    try { await m.open(); } catch { g.setMic("denied"); setErr(t("micDenied")); setPhase("error"); return; }
+    try { await m.open(); } catch { m.close(); g.setMeasuring(false); g.setMic("denied"); setErr(t("micDenied")); setPhase("error"); return; }
+    if (!alive.current) { m.close(); return; }
     g.setMic("granted");
     mic.current = m;
     setPhase("calibrate");
@@ -39,9 +41,10 @@ export function Round({ label, char, onDone, autoStart }: { label: string; char:
       await new Promise((r) => setTimeout(r, 900));
     }
     if (!alive.current) return;
-    setPhase("scream"); sfx.go(g.sound);
+    setPhase("scream");
     const res = await m.runRound(baseline, (l, p, ms) => { setLive(l); setPeak(p); setLeft(ms); });
     m.close(); mic.current = null;
+    g.setMeasuring(false);
     if (!alive.current) return;
     setPhase("done");
     setTimeout(() => alive.current && onDone(res), 900);
@@ -52,7 +55,7 @@ export function Round({ label, char, onDone, autoStart }: { label: string; char:
       <p className="title-pop text-3xl">{label}</p>
       <div className="relative">
         {phase === "scream" && <Waves />}
-        <Avatar c={char} size={150} anim={phase === "scream" ? (live > 50 ? "anim-shake" : "") : "anim-bob"} />
+        <Avatar c={char} size={150} shouting={phase === "scream" && live > 20} anim={phase === "scream" ? (live > 50 ? "anim-shake" : "") : "anim-bob"} />
       </div>
 
       {phase === "permission" && (

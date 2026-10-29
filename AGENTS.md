@@ -11,3 +11,6 @@
 
 - Game lives in src/game (client state machine in App.tsx, scoring rules in scoring.ts with tests); human scores come only from MicAnalyzer, never simulated.
 - Premium character entitlements are never read from localStorage; only a verified store may grant them.
+- Background music is synthesized in the browser and silenced throughout microphone measurement to avoid contaminating human scores.
+- Game translations share one typed catalog and language selector; right-to-left languages set the document direction.
+- Character expressions switch between original and shouting sprites through the shared Avatar, driven by the real microphone level during rounds.
