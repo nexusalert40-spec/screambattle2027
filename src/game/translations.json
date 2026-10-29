@@ -74,7 +74,14 @@
     "coins": "Coins",
     "upgrades": "Upgrades",
     "characterBundle": "Character bundle",
-    "paymentsPending": "Purchases are not available yet."
+    "paymentsPending": "Purchases are not available yet.",
+    "packChars": "Premium Characters",
+    "packCharsDesc": "Unlocks Captain Loud, Nova and Zizo the Wizard.",
+    "packFx": "Scream Effects",
+    "packFxDesc": "Fun sound effects that play with your screams.",
+    "packMeters": "Advanced Meters",
+    "packMetersDesc": "Extra loudness meter styles for your battles.",
+    "buyDisabled": "Buying is turned off until seller verification and payouts are confirmed. The game stays free."
   },
   "ar": {
     "tagline": "من يصرخ بصوت أعلى؟",
@@ -151,7 +158,14 @@
     "coins": "العملات",
     "upgrades": "الترقيات",
     "characterBundle": "حزمة شخصيات",
-    "paymentsPending": "عمليات الشراء غير متاحة بعد."
+    "paymentsPending": "عمليات الشراء غير متاحة بعد.",
+    "packChars": "الشخصيات المميزة",
+    "packCharsDesc": "تفتح كابتن صوت ونوفا وزيزو الساحر.",
+    "packFx": "مؤثرات الصراخ",
+    "packFxDesc": "مؤثرات صوتية ممتعة تُشغَّل مع صرخاتك.",
+    "packMeters": "عدّادات متقدمة",
+    "packMetersDesc": "أنماط عدّادات إضافية لقياس الصوت في معاركك.",
+    "buyDisabled": "الشراء متوقف حتى يتم تأكيد تحقق البائع وطرق الدفع. تبقى اللعبة مجانية."
   },
   "ru": {
     "tagline": "Кто крикнет громче всех?",
@@ -228,7 +242,14 @@
     "coins": "Монеты",
     "upgrades": "Улучшения",
     "characterBundle": "Набор персонажей",
-    "paymentsPending": "Покупки пока недоступны."
+    "paymentsPending": "Покупки пока недоступны.",
+    "packChars": "Премиум-персонажи",
+    "packCharsDesc": "Открывает Капитана Крика, Нову и волшебника Зизо.",
+    "packFx": "Эффекты крика",
+    "packFxDesc": "Весёлые звуковые эффекты, звучащие вместе с вашими криками.",
+    "packMeters": "Продвинутые измерители",
+    "packMetersDesc": "Дополнительные стили измерителей громкости для ваших боёв.",
+    "buyDisabled": "Покупки отключены до подтверждения проверки продавца и способов выплат. Игра остаётся бесплатной."
   },
   "zh": {
     "tagline": "谁的尖叫声最大？",
@@ -305,7 +326,14 @@
     "coins": "金币",
     "upgrades": "升级",
     "characterBundle": "角色礼包",
-    "paymentsPending": "购买功能尚未开放。"
+    "paymentsPending": "购买功能尚未开放。",
+    "packChars": "付费角色",
+    "packCharsDesc": "解锁“高声队长”、“新星”和“巫师齐佐”。",
+    "packFx": "呐喊特效",
+    "packFxDesc": "伴随你的呐喊播放的趣味音效。",
+    "packMeters": "高级计量器",
+    "packMetersDesc": "为你的对战提供额外的响度计量器样式。",
+    "buyDisabled": "在卖家验证和收款方式确认之前，购买功能保持关闭。游戏仍然免费。"
   },
   "tr": {
     "tagline": "Kim En Yüksek Sesle Çığlık Atabilir?",
@@ -382,7 +410,14 @@
     "coins": "Jetonlar",
     "upgrades": "Yükseltmeler",
     "characterBundle": "Karakter paketi",
-    "paymentsPending": "Satın alımlar henüz kullanılamıyor."
+    "paymentsPending": "Satın alımlar henüz kullanılamıyor.",
+    "packChars": "Premium Karakterler",
+    "packCharsDesc": "Kaptan Ses, Nova ve Büyücü Zizo'yu açar.",
+    "packFx": "Çığlık Efektleri",
+    "packFxDesc": "Çığlıklarınla birlikte çalan eğlenceli ses efektleri.",
+    "packMeters": "Gelişmiş Ölçerler",
+    "packMetersDesc": "Savaşların için ek ses şiddeti ölçer stilleri.",
+    "buyDisabled": "Satıcı doğrulaması ve ödeme yöntemleri onaylanana kadar satın alma kapalıdır. Oyun ücretsiz kalır."
   },
   "es": {
     "tagline": "¿Quién puede gritar más fuerte?",
@@ -459,7 +494,14 @@
     "coins": "Monedas",
     "upgrades": "Mejoras",
     "characterBundle": "Paquete de personajes",
-    "paymentsPending": "Las compras aún no están disponibles."
+    "paymentsPending": "Las compras aún no están disponibles.",
+    "packChars": "Personajes prémium",
+    "packCharsDesc": "Desbloquea a Capitán Voz, Nova y Zizo el Mago.",
+    "packFx": "Efectos de grito",
+    "packFxDesc": "Efectos de sonido divertidos que suenan con tus gritos.",
+    "packMeters": "Medidores avanzados",
+    "packMetersDesc": "Estilos de medidor de volumen adicionales para tus batallas.",
+    "buyDisabled": "Las compras están desactivadas hasta que se confirme la verificación del vendedor y los métodos de pago. El juego sigue siendo gratuito."
   },
   "ms": {
     "tagline": "Siapa Boleh Menjerit Paling Kuat?",
@@ -536,7 +578,14 @@
     "coins": "Syiling",
     "upgrades": "Naik taraf",
     "characterBundle": "Pakej watak",
-    "paymentsPending": "Pembelian belum tersedia."
+    "paymentsPending": "Pembelian belum tersedia.",
+    "packChars": "Watak Premium",
+    "packCharsDesc": "Membuka Kapten Loud, Nova dan Zizo the Wizard.",
+    "packFx": "Kesan Jeritan",
+    "packFxDesc": "Kesan bunyi menyeronokkan yang dimainkan bersama jeritan anda.",
+    "packMeters": "Meter Lanjutan",
+    "packMetersDesc": "Gaya meter kekuatan bunyi tambahan untuk pertarungan anda.",
+    "buyDisabled": "Pembelian dimatikan sehingga pengesahan penjual dan kaedah pembayaran disahkan. Permainan kekal percuma."
   },
   "ur": {
     "tagline": "کون سب سے اونچی چیخ مار سکتا ہے؟",
@@ -613,6 +662,13 @@
     "coins": "سکے",
     "upgrades": "بہتریاں",
     "characterBundle": "کرداروں کا پیک",
-    "paymentsPending": "خریداری ابھی دستیاب نہیں ہے۔"
+    "paymentsPending": "خریداری ابھی دستیاب نہیں ہے۔",
+    "packChars": "پریمیم کردار",
+    "packCharsDesc": "کپتن لاؤڈ، نووا اور جادوگر زیزو کو کھولتا ہے۔",
+    "packFx": "چیخ کے ایفیکٹس",
+    "packFxDesc": "آپ کی چیخوں کے ساتھ بجنے والے مزیدار ساؤنڈ ایفیکٹس۔",
+    "packMeters": "ایڈوانسڈ میٹرز",
+    "packMetersDesc": "آپ کی جنگوں کے لیے اضافی آواز پیمائش میٹر اسٹائلز۔",
+    "buyDisabled": "بیچنے والے کی تصدیق اور ادائیگی کے طریقوں کی تصدیق تک خریداری بند ہے۔ کھیل مفت رہتا ہے۔"
   }
 }

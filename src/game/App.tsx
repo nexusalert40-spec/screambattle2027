@@ -331,19 +331,39 @@ function Info({ view, onBack }: { view: "online" | "leader"; onBack: () => void 
   );
 }
 
-/* ---------- Shop ---------- */
+/* ---------- Shop (preview only — purchases disabled until seller verification) ---------- */
 function Shop({ onBack }: { onBack: () => void }) {
   const g = useGame();
   const premium = CHARACTERS.filter((c) => c.tier === "premium");
+  const products = [
+    { id: "premium-characters", name: g.t("packChars"), desc: g.t("packCharsDesc"), price: "$0.99", icon: Crown, tone: "bg-grape-grad" },
+    { id: "scream-effects", name: g.t("packFx"), desc: g.t("packFxDesc"), price: "$0.99", icon: Volume2, tone: "bg-aicha-grad" },
+    { id: "advanced-meters", name: g.t("packMeters"), desc: g.t("packMetersDesc"), price: "$1.99", icon: Gauge, tone: "bg-turq-grad" },
+  ] as const;
   return (
     <Screen title={g.t("shop")} onBack={onBack}>
-      <div className="card-game mb-4 flex items-center gap-3 p-3 text-sm font-semibold"><Lock className="size-6 shrink-0" />{g.t("shopNote")}</div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="card-game mb-4 flex items-center gap-3 p-3 text-sm font-semibold"><Lock className="size-6 shrink-0" />{g.t("buyDisabled")}</div>
+      <div className="flex flex-col gap-3">
+        {products.map((p) => (
+          <div key={p.id} className="card-game flex items-center gap-3 p-3">
+            <span className={`btn-game ${p.tone} grid size-14 shrink-0 place-items-center rounded-2xl`}><p.icon className="size-7 text-ink" /></span>
+            <div className="min-w-0 flex-1">
+              <p className="font-display text-lg leading-tight">{p.name}</p>
+              <p className="text-xs font-semibold text-muted-foreground">{p.desc}</p>
+            </div>
+            <div className="flex shrink-0 flex-col items-center gap-1">
+              <span className="rounded-full border-2 border-ink bg-sun px-2 py-0.5 font-display text-sm">{p.price}</span>
+              <button disabled aria-disabled className="btn-game bg-card cursor-not-allowed px-3 py-1 text-xs opacity-60">{g.t("needsBackend")}</button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="title-white mt-5 text-center text-xl">{g.t("packChars")}</p>
+      <div className="mt-2 grid grid-cols-3 gap-3">
         {premium.map((c) => (
           <CharTile key={c.id} c={c}>
             <img src={c.image} alt={c.name.en} loading="lazy" className="aspect-square w-full object-contain p-2" />
-            <p className="title-white px-2 text-center text-lg">{characterName(c, g.lang)}</p>
-            <div className="p-2"><button disabled className="btn-game bg-card w-full py-2 text-sm">{g.t("needsBackend")}</button></div>
+            <p className="title-white truncate px-1 pb-1 text-center text-sm">{characterName(c, g.lang)}</p>
           </CharTile>
         ))}
       </div>
