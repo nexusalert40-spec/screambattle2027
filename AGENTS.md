@@ -14,3 +14,6 @@
 - Background music is synthesized in the browser and silenced throughout microphone measurement to avoid contaminating human scores.
 - Game translations share one typed catalog and language selector; right-to-left languages set the document direction.
 - Character expressions switch between original and shouting sprites through the shared Avatar, driven by the real microphone level during rounds.
+- Native apps use Capacitor with a static SPA build (NATIVE_BUILD=1 → dist/client); the default build stays SSR for web, so game code must not depend on server-only rendering.
+- Store billing goes through the BillingService interface in src/game/billing.ts; providers may never report success without server-side receipt verification.
+- Release, signing and native setup steps live in docs/RELEASE.md; keep it updated when platform config changes.

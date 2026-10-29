@@ -23,6 +23,16 @@ export function Round({ label, char, onDone, autoStart }: { label: string; char:
   const alive = useRef(true);
 
   useEffect(() => { alive.current = true; return () => { alive.current = false; mic.current?.close(); g.setMeasuring(false); }; }, []);
+  // Release the microphone if the app is backgrounded mid-round (native apps and mobile browsers).
+  useEffect(() => {
+    const onHide = () => {
+      if (!document.hidden || !mic.current) return;
+      mic.current.close(); mic.current = null; g.setMeasuring(false);
+      setErr(t("tryAgain")); setPhase("error");
+    };
+    document.addEventListener("visibilitychange", onHide);
+    return () => document.removeEventListener("visibilitychange", onHide);
+  }, [g, t]);
   useEffect(() => { if (autoStart && phase === "ready") start(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function start() {
@@ -35,14 +45,16 @@ export function Round({ label, char, onDone, autoStart }: { label: string; char:
     mic.current = m;
     setPhase("calibrate");
     const baseline = await m.calibrate();
+    const still = () => alive.current && mic.current === m;
     for (const n of [3, 2, 1]) {
-      if (!alive.current) return;
+      if (!still()) return;
       setPhase("count"); setCount(n); sfx.tick(g.sound);
       await new Promise((r) => setTimeout(r, 900));
     }
-    if (!alive.current) return;
+    if (!still()) return;
     setPhase("scream");
     const res = await m.runRound(baseline, (l, p, ms) => { setLive(l); setPeak(p); setLeft(ms); });
+    if (!still()) return;
     m.close(); mic.current = null;
     g.setMeasuring(false);
     if (!alive.current) return;
