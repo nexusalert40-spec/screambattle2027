@@ -23,6 +23,16 @@ export function Round({ label, char, onDone, autoStart }: { label: string; char:
   const alive = useRef(true);
 
   useEffect(() => { alive.current = true; return () => { alive.current = false; mic.current?.close(); g.setMeasuring(false); }; }, []);
+  // Release the microphone if the app is backgrounded mid-round (native apps and mobile browsers).
+  useEffect(() => {
+    const onHide = () => {
+      if (!document.hidden || !mic.current) return;
+      alive.current = false; mic.current.close(); mic.current = null; g.setMeasuring(false);
+      alive.current = true; setErr(t("tryAgain")); setPhase("error");
+    };
+    document.addEventListener("visibilitychange", onHide);
+    return () => document.removeEventListener("visibilitychange", onHide);
+  }, [g, t]);
   useEffect(() => { if (autoStart && phase === "ready") start(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function start() {
