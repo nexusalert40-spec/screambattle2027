@@ -8,7 +8,7 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 // NATIVE_BUILD=1 produces a static single-page bundle (dist/client) for Capacitor.
 // The default build stays the SSR web build deployed over HTTPS.
-const native = process.env.NATIVE_BUILD === "1";
+const native = process.env['NATIVE_BUILD'] === "1";
 
 export default defineConfig({
   tanstackStart: native
