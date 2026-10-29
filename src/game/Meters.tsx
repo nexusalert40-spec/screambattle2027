@@ -14,7 +14,7 @@ function RpmMeter({ value, peak }: P) {
     return `M${x1} ${y1} A80 80 0 ${to - from > 75 ? 1 : 0} 1 ${x2} ${y2}`;
   };
   return (
-    <svg viewBox="0 0 200 190" className={`w-full ${value > 80 ? "anim-shake" : ""}`}>
+    <svg viewBox="0 0 200 210" className={`w-full ${value > 80 ? "anim-shake" : ""}`}>
       <circle cx="100" cy="110" r="96" fill="var(--card)" stroke="var(--ink)" strokeWidth="5" />
       <path d={arc(0, 40)} stroke="var(--turq)" strokeWidth="14" fill="none" />
       <path d={arc(40, 70)} stroke="var(--sun)" strokeWidth="14" fill="none" />

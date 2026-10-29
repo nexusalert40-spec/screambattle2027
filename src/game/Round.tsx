@@ -33,10 +33,9 @@ export function Round({ label, char, onDone, autoStart }: { label: string; char:
     mic.current = m;
     setPhase("calibrate");
     const baseline = await m.calibrate();
-    console.log("SBDBG baseline", baseline, alive.current);
     for (const n of [3, 2, 1]) {
       if (!alive.current) return;
-      console.log("SBDBG count", n); setPhase("count"); setCount(n); sfx.tick(g.sound);
+      setPhase("count"); setCount(n); sfx.tick(g.sound);
       await new Promise((r) => setTimeout(r, 900));
     }
     if (!alive.current) return;
