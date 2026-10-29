@@ -45,16 +45,16 @@ export function Round({ label, char, onDone, autoStart }: { label: string; char:
     mic.current = m;
     setPhase("calibrate");
     const baseline = await m.calibrate();
-    const live = () => alive.current && mic.current === m;
+    const still = () => alive.current && mic.current === m;
     for (const n of [3, 2, 1]) {
-      if (!live()) return;
+      if (!still()) return;
       setPhase("count"); setCount(n); sfx.tick(g.sound);
       await new Promise((r) => setTimeout(r, 900));
     }
-    if (!live()) return;
+    if (!still()) return;
     setPhase("scream");
     const res = await m.runRound(baseline, (l, p, ms) => { setLive(l); setPeak(p); setLeft(ms); });
-    if (!live()) return;
+    if (!still()) return;
     m.close(); mic.current = null;
     g.setMeasuring(false);
     if (!alive.current) return;
