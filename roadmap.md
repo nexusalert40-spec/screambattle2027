@@ -1,7 +1,9 @@
 - [ ] Phase 2: Cloud backend, online rooms, global leaderboard (needs user go-ahead)
-- [ ] Phase 3: real in-app purchases for premium characters (needs store billing setup)
+- [ ] Phase 3: real in-app purchases (billing interface ready; needs store accounts, products, verification backend)
 - [ ] Splash video asset (animated fallback in place)
 - [x] Add background battle music, muted during microphone measurement
 - [x] Add natural shouting expressions to characters
 - [x] Support eight requested languages
 - [ ] Enable payments for upgrades, character bundles and coins (requires Pro plan, provider confirmation and product prices)
+- [x] Capacitor Android/iOS projects, mic permissions, safe areas, icons/splash, release docs
+- [ ] Replace placeholder app ID, signing keys, store accounts (needs user credentials)
