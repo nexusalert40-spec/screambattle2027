@@ -27,8 +27,8 @@ export function Round({ label, char, onDone, autoStart }: { label: string; char:
   useEffect(() => {
     const onHide = () => {
       if (!document.hidden || !mic.current) return;
-      alive.current = false; mic.current.close(); mic.current = null; g.setMeasuring(false);
-      alive.current = true; setErr(t("tryAgain")); setPhase("error");
+      mic.current.close(); mic.current = null; g.setMeasuring(false);
+      setErr(t("tryAgain")); setPhase("error");
     };
     document.addEventListener("visibilitychange", onHide);
     return () => document.removeEventListener("visibilitychange", onHide);
@@ -45,14 +45,16 @@ export function Round({ label, char, onDone, autoStart }: { label: string; char:
     mic.current = m;
     setPhase("calibrate");
     const baseline = await m.calibrate();
+    const live = () => alive.current && mic.current === m;
     for (const n of [3, 2, 1]) {
-      if (!alive.current) return;
+      if (!live()) return;
       setPhase("count"); setCount(n); sfx.tick(g.sound);
       await new Promise((r) => setTimeout(r, 900));
     }
-    if (!alive.current) return;
+    if (!live()) return;
     setPhase("scream");
     const res = await m.runRound(baseline, (l, p, ms) => { setLive(l); setPeak(p); setLeft(ms); });
+    if (!live()) return;
     m.close(); mic.current = null;
     g.setMeasuring(false);
     if (!alive.current) return;
