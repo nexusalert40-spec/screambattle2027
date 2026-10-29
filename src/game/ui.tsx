@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useGame } from "./store";
 import { sfx } from "./sfx";
-import { themeBg, type Character } from "./characters";
+import { themeBg, shoutImages, type Character } from "./characters";
 
 export function GameButton({ children, onClick, tone = "sun", className = "", disabled }: { children: ReactNode; onClick?: () => void; tone?: "sun" | "ali" | "aicha" | "grape" | "turq"; className?: string; disabled?: boolean }) {
   const { sound } = useGame();
@@ -32,10 +32,10 @@ export function Screen({ title, onBack, children }: { title: string; onBack?: ()
   );
 }
 
-export function Avatar({ c, size = 140, anim = "anim-bob", flip }: { c: Character; size?: number; anim?: string; flip?: boolean | undefined }) {
+export function Avatar({ c, size = 140, anim = "anim-bob", flip, shouting = false }: { c: Character; size?: number; anim?: string; flip?: boolean | undefined; shouting?: boolean }) {
   return (
     <div className={anim} style={{ width: size, height: size }}>
-      <img src={c.image} alt={c.name.en} width={1024} height={1024} className="size-full object-contain drop-shadow-[0_6px_0_var(--ink)]" style={flip ? { transform: "scaleX(-1)" } : undefined} />
+      <img src={shouting ? shoutImages[c.id] ?? c.image : c.image} data-expression={shouting ? "shout" : "idle"} alt={c.name.en} width={1024} height={1024} className="size-full object-contain drop-shadow-[0_6px_0_var(--ink)]" style={flip ? { transform: "scaleX(-1)" } : undefined} />
     </div>
   );
 }

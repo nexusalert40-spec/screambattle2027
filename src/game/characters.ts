@@ -4,6 +4,12 @@ import hero from "@/assets/char-hero.png";
 import astro from "@/assets/char-astro.png";
 import robot from "@/assets/char-robot.png";
 import wizard from "@/assets/char-wizard.png";
+import aliShout from "@/assets/char-ali-shout.png";
+import aichaShout from "@/assets/char-aicha-shout.png";
+import heroShout from "@/assets/char-hero-shout.png";
+import astroShout from "@/assets/char-astro-shout.png";
+import robotShout from "@/assets/char-robot-shout.png";
+import wizardShout from "@/assets/char-wizard-shout.png";
 
 export type Tier = "free" | "premium";
 export type Theme = "ali" | "aicha" | "sun" | "turq" | "grape";
@@ -34,8 +40,13 @@ export const themeBg: Record<Theme, string> = {
   grape: "bg-grape-grad",
 };
 
+export const shoutImages: Record<string, string> = { ali: aliShout, aicha: aichaShout, hero: heroShout, astro: astroShout, robo: robotShout, wizard: wizardShout };
+export function characterName(c: Character, lang: string) { return lang === "ar" || lang === "ur" ? c.name.ar : c.name.en; }
+
 export function getChar(id: string): Character {
-  return CHARACTERS.find((c) => c.id === id) ?? CHARACTERS[0]!;
+  const c = CHARACTERS.find((c) => c.id === id) ?? CHARACTERS[0];
+  if (!c) throw new Error("Character catalog is empty");
+  return c;
 }
 
 /** Owned = free, or granted by a verified entitlement (none until store billing is configured). */
