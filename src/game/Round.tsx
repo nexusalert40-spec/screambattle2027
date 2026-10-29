@@ -10,7 +10,7 @@ import type { Character } from "./characters";
 type Phase = "permission" | "ready" | "calibrate" | "count" | "scream" | "done" | "error";
 
 /** One full player turn: mic permission → calibration → 3,2,1 → 5 s capture. */
-export function Round({ label, char, onDone, autoStart }: { label: string; char: Character; onDone: (r: RoundResult) => void; autoStart?: boolean }) {
+export function Round({ label, char, onDone, autoStart }: { label: string; char: Character; onDone: (r: RoundResult) => void; autoStart?: boolean | undefined }) {
   const g = useGame();
   const { t } = g;
   const [phase, setPhase] = useState<Phase>(g.mic === "granted" ? "ready" : "permission");

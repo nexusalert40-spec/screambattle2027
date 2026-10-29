@@ -32,7 +32,7 @@ export function Screen({ title, onBack, children }: { title: string; onBack?: ()
   );
 }
 
-export function Avatar({ c, size = 140, anim = "anim-bob", flip }: { c: Character; size?: number; anim?: string; flip?: boolean }) {
+export function Avatar({ c, size = 140, anim = "anim-bob", flip }: { c: Character; size?: number; anim?: string; flip?: boolean | undefined }) {
   return (
     <div className={anim} style={{ width: size, height: size }}>
       <img src={c.image} alt={c.name.en} width={1024} height={1024} className="size-full object-contain drop-shadow-[0_6px_0_var(--ink)]" style={flip ? { transform: "scaleX(-1)" } : undefined} />

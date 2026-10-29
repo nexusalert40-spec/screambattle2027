@@ -34,8 +34,8 @@ export const themeBg: Record<Theme, string> = {
   grape: "bg-grape-grad",
 };
 
-export function getChar(id: string) {
-  return CHARACTERS.find((c) => c.id === id) ?? CHARACTERS[0];
+export function getChar(id: string): Character {
+  return CHARACTERS.find((c) => c.id === id) ?? CHARACTERS[0]!;
 }
 
 /** Owned = free, or granted by a verified entitlement (none until store billing is configured). */

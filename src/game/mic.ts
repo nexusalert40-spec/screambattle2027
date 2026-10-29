@@ -39,7 +39,7 @@ export class MicAnalyzer {
     if (!this.analyser || !this.buf) return -100;
     this.analyser.getFloatTimeDomainData(this.buf);
     let sum = 0;
-    for (let i = 0; i < this.buf.length; i++) sum += this.buf[i] * this.buf[i];
+    for (let i = 0; i < this.buf.length; i++) { const v = this.buf[i] ?? 0; sum += v * v; }
     return rmsToDb(Math.sqrt(sum / this.buf.length));
   }
 
