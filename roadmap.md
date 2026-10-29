@@ -1,0 +1,3 @@
+- [ ] Phase 2: Cloud backend, online rooms, global leaderboard (needs user go-ahead)
+- [ ] Phase 3: real in-app purchases for premium characters (needs store billing setup)
+- [ ] Splash video asset (animated fallback in place)
