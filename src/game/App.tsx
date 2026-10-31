@@ -123,9 +123,9 @@ function DownloadApp() {
   if (ins.native) return null;
   // Store listings don't exist yet, so the store badges stay disabled until real URLs are added.
   const badge = (Icon: typeof Apple, pre: string, name: string) => (
-    <button disabled aria-disabled className="btn-game flex items-center gap-2 bg-ink px-3 py-2 text-start text-card" title={t("comingSoon")}>
+    <button disabled aria-disabled className="btn-game flex min-w-0 items-center gap-1.5 bg-ink px-2 py-2 text-start text-card" title={t("comingSoon")}>
       <Icon className="size-7 shrink-0" />
-      <span className="flex flex-col leading-none"><span className="font-sans text-[10px] font-bold">{pre}</span><span className="text-lg">{name}</span></span>
+      <span className="flex flex-col leading-none"><span className="whitespace-nowrap font-sans text-[9px] font-bold">{pre}</span><span className="whitespace-nowrap text-base">{name}</span></span>
     </button>
   );
   return (
