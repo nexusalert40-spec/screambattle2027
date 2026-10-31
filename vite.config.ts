@@ -27,7 +27,7 @@ function offlineWorker(): Plugin {
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
-        navigateFallback: undefined,
+        navigateFallback: null,
         runtimeCaching: [
           {
             urlPattern: ({ request, url }) => request.mode === "navigate" && !url.pathname.startsWith("/~oauth"),
