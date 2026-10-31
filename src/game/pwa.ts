@@ -1,3 +1,4 @@
+/// <reference types="vite-plugin-pwa/client" />
 // Single place that registers the offline service worker and tracks the browser's install prompt.
 import { useEffect, useState } from "react";
 import { Capacitor } from "@capacitor/core";
