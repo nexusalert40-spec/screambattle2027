@@ -81,7 +81,16 @@
     "packFxDesc": "Fun sound effects that play with your screams.",
     "packMeters": "Advanced Meters",
     "packMetersDesc": "Extra loudness meter styles for your battles.",
-    "buyDisabled": "Buying is turned off until seller verification and payouts are confirmed. The game stays free."
+    "buyDisabled": "Buying is turned off until seller verification and payouts are confirmed. The game stays free.",
+    "getApp": "Get the App",
+    "getAppBody": "Play full-screen from your home screen.",
+    "installApp": "Install App",
+    "iosInstallHint": "On iPhone: tap Share, then “Add to Home Screen”.",
+    "appStorePre": "Download on the",
+    "appStore": "App Store",
+    "playPre": "Get it on",
+    "googlePlay": "Google Play",
+    "comingSoon": "Coming soon"
   },
   "ar": {
     "tagline": "من يصرخ بصوت أعلى؟",
@@ -165,7 +174,16 @@
     "packFxDesc": "مؤثرات صوتية ممتعة تُشغَّل مع صرخاتك.",
     "packMeters": "عدّادات متقدمة",
     "packMetersDesc": "أنماط عدّادات إضافية لقياس الصوت في معاركك.",
-    "buyDisabled": "الشراء متوقف حتى يتم تأكيد تحقق البائع وطرق الدفع. تبقى اللعبة مجانية."
+    "buyDisabled": "الشراء متوقف حتى يتم تأكيد تحقق البائع وطرق الدفع. تبقى اللعبة مجانية.",
+    "getApp": "حمّل التطبيق",
+    "getAppBody": "العب بملء الشاشة من شاشتك الرئيسية.",
+    "installApp": "ثبّت التطبيق",
+    "iosInstallHint": "على iPhone: اضغط مشاركة ثم «إضافة إلى الشاشة الرئيسية».",
+    "appStorePre": "حمّله من",
+    "appStore": "App Store",
+    "playPre": "احصل عليه من",
+    "googlePlay": "Google Play",
+    "comingSoon": "قريبًا"
   },
   "ru": {
     "tagline": "Кто крикнет громче всех?",
@@ -249,7 +267,16 @@
     "packFxDesc": "Весёлые звуковые эффекты, звучащие вместе с вашими криками.",
     "packMeters": "Продвинутые измерители",
     "packMetersDesc": "Дополнительные стили измерителей громкости для ваших боёв.",
-    "buyDisabled": "Покупки отключены до подтверждения проверки продавца и способов выплат. Игра остаётся бесплатной."
+    "buyDisabled": "Покупки отключены до подтверждения проверки продавца и способов выплат. Игра остаётся бесплатной.",
+    "getApp": "Скачать приложение",
+    "getAppBody": "Играйте на весь экран с главного экрана.",
+    "installApp": "Установить",
+    "iosInstallHint": "На iPhone: нажмите «Поделиться», затем «На экран Домой».",
+    "appStorePre": "Загрузите в",
+    "appStore": "App Store",
+    "playPre": "Доступно в",
+    "googlePlay": "Google Play",
+    "comingSoon": "Скоро"
   },
   "zh": {
     "tagline": "谁的尖叫声最大？",
@@ -333,7 +360,16 @@
     "packFxDesc": "伴随你的呐喊播放的趣味音效。",
     "packMeters": "高级计量器",
     "packMetersDesc": "为你的对战提供额外的响度计量器样式。",
-    "buyDisabled": "在卖家验证和收款方式确认之前，购买功能保持关闭。游戏仍然免费。"
+    "buyDisabled": "在卖家验证和收款方式确认之前，购买功能保持关闭。游戏仍然免费。",
+    "getApp": "获取应用",
+    "getAppBody": "从主屏幕全屏畅玩。",
+    "installApp": "安装应用",
+    "iosInstallHint": "iPhone：点击分享，然后选择“添加到主屏幕”。",
+    "appStorePre": "下载于",
+    "appStore": "App Store",
+    "playPre": "下载于",
+    "googlePlay": "Google Play",
+    "comingSoon": "即将推出"
   },
   "tr": {
     "tagline": "Kim En Yüksek Sesle Çığlık Atabilir?",
@@ -417,7 +453,16 @@
     "packFxDesc": "Çığlıklarınla birlikte çalan eğlenceli ses efektleri.",
     "packMeters": "Gelişmiş Ölçerler",
     "packMetersDesc": "Savaşların için ek ses şiddeti ölçer stilleri.",
-    "buyDisabled": "Satıcı doğrulaması ve ödeme yöntemleri onaylanana kadar satın alma kapalıdır. Oyun ücretsiz kalır."
+    "buyDisabled": "Satıcı doğrulaması ve ödeme yöntemleri onaylanana kadar satın alma kapalıdır. Oyun ücretsiz kalır.",
+    "getApp": "Uygulamayı Al",
+    "getAppBody": "Ana ekranından tam ekran oyna.",
+    "installApp": "Uygulamayı Yükle",
+    "iosInstallHint": "iPhone'da: Paylaş'a, ardından “Ana Ekrana Ekle”ye dokun.",
+    "appStorePre": "İndirin",
+    "appStore": "App Store",
+    "playPre": "Edinin",
+    "googlePlay": "Google Play",
+    "comingSoon": "Yakında"
   },
   "es": {
     "tagline": "¿Quién puede gritar más fuerte?",
@@ -501,7 +546,16 @@
     "packFxDesc": "Efectos de sonido divertidos que suenan con tus gritos.",
     "packMeters": "Medidores avanzados",
     "packMetersDesc": "Estilos de medidor de volumen adicionales para tus batallas.",
-    "buyDisabled": "Las compras están desactivadas hasta que se confirme la verificación del vendedor y los métodos de pago. El juego sigue siendo gratuito."
+    "buyDisabled": "Las compras están desactivadas hasta que se confirme la verificación del vendedor y los métodos de pago. El juego sigue siendo gratuito.",
+    "getApp": "Consigue la app",
+    "getAppBody": "Juega a pantalla completa desde tu inicio.",
+    "installApp": "Instalar app",
+    "iosInstallHint": "En iPhone: toca Compartir y luego “Añadir a pantalla de inicio”.",
+    "appStorePre": "Descárgalo en el",
+    "appStore": "App Store",
+    "playPre": "Disponible en",
+    "googlePlay": "Google Play",
+    "comingSoon": "Próximamente"
   },
   "ms": {
     "tagline": "Siapa Boleh Menjerit Paling Kuat?",
@@ -585,7 +639,16 @@
     "packFxDesc": "Kesan bunyi menyeronokkan yang dimainkan bersama jeritan anda.",
     "packMeters": "Meter Lanjutan",
     "packMetersDesc": "Gaya meter kekuatan bunyi tambahan untuk pertarungan anda.",
-    "buyDisabled": "Pembelian dimatikan sehingga pengesahan penjual dan kaedah pembayaran disahkan. Permainan kekal percuma."
+    "buyDisabled": "Pembelian dimatikan sehingga pengesahan penjual dan kaedah pembayaran disahkan. Permainan kekal percuma.",
+    "getApp": "Dapatkan Apl",
+    "getAppBody": "Main skrin penuh dari skrin utama anda.",
+    "installApp": "Pasang Apl",
+    "iosInstallHint": "Di iPhone: ketik Kongsi, kemudian “Tambah ke Skrin Utama”.",
+    "appStorePre": "Muat turun di",
+    "appStore": "App Store",
+    "playPre": "Dapatkan di",
+    "googlePlay": "Google Play",
+    "comingSoon": "Akan datang"
   },
   "ur": {
     "tagline": "کون سب سے اونچی چیخ مار سکتا ہے؟",
@@ -669,6 +732,15 @@
     "packFxDesc": "آپ کی چیخوں کے ساتھ بجنے والے مزیدار ساؤنڈ ایفیکٹس۔",
     "packMeters": "ایڈوانسڈ میٹرز",
     "packMetersDesc": "آپ کی جنگوں کے لیے اضافی آواز پیمائش میٹر اسٹائلز۔",
-    "buyDisabled": "بیچنے والے کی تصدیق اور ادائیگی کے طریقوں کی تصدیق تک خریداری بند ہے۔ کھیل مفت رہتا ہے۔"
+    "buyDisabled": "بیچنے والے کی تصدیق اور ادائیگی کے طریقوں کی تصدیق تک خریداری بند ہے۔ کھیل مفت رہتا ہے۔",
+    "getApp": "ایپ حاصل کریں",
+    "getAppBody": "ہوم اسکرین سے فل اسکرین کھیلیں۔",
+    "installApp": "ایپ انسٹال کریں",
+    "iosInstallHint": "iPhone پر: شیئر دبائیں، پھر “ہوم اسکرین میں شامل کریں”۔",
+    "appStorePre": "ڈاؤن لوڈ کریں",
+    "appStore": "App Store",
+    "playPre": "حاصل کریں",
+    "googlePlay": "Google Play",
+    "comingSoon": "جلد آ رہا ہے"
   }
 }

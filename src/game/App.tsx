@@ -9,6 +9,8 @@ import { Meter } from "./Meters";
 import { MicAnalyzer, type RoundResult } from "./mic";
 import { aiOpponentScore, decideWinner, type Difficulty } from "./scoring";
 import { sfx } from "./sfx";
+import { setupServiceWorker, useInstall } from "./pwa";
+import { Download, Apple, Play } from "lucide-react";
 
 type View = "splash" | "menu" | "chars" | "meters" | "single" | "local" | "practice" | "online" | "leader" | "shop" | "settings";
 
@@ -18,6 +20,7 @@ export function ScreamBattle() {
 
 function Shell() {
   const [view, setView] = useState<View>("splash");
+  useEffect(() => { void setupServiceWorker(); }, []);
   const go = (v: View) => setView(v);
   const home = () => go("menu");
   switch (view) {
@@ -108,7 +111,36 @@ function Menu({ go }: { go: (v: View) => void }) {
           </button>
         ))}
       </div>
+      <DownloadApp />
     </div>
+  );
+}
+
+/* ---------- Download App (hidden inside the native apps) ---------- */
+function DownloadApp() {
+  const { t } = useGame();
+  const ins = useInstall();
+  if (ins.native) return null;
+  // Store listings don't exist yet, so the store badges stay disabled until real URLs are added.
+  const badge = (Icon: typeof Apple, pre: string, name: string) => (
+    <button disabled aria-disabled className="btn-game flex min-w-0 items-center gap-1.5 bg-ink px-2 py-2 text-start text-card" title={t("comingSoon")}>
+      <Icon className="size-7 shrink-0" />
+      <span className="flex flex-col leading-none"><span className="whitespace-nowrap font-sans text-[9px] font-bold">{pre}</span><span className="whitespace-nowrap text-base">{name}</span></span>
+    </button>
+  );
+  return (
+    <section aria-labelledby="get-app" className="card-game mt-6 p-4 text-center">
+      <h2 id="get-app" className="font-display text-2xl">{t("getApp")}</h2>
+      <p className="text-sm font-bold text-muted-foreground">{t("getAppBody")}</p>
+      {!ins.standalone && (ins.canPrompt
+        ? <GameButton onClick={() => void ins.prompt()} className="mt-3 inline-flex w-full items-center justify-center gap-2"><Download className="size-5" />{t("installApp")}</GameButton>
+        : ins.ios && <p className="mt-3 rounded-2xl bg-muted p-2 text-sm font-bold">{t("iosInstallHint")}</p>)}
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        {badge(Apple, t("appStorePre"), t("appStore"))}
+        {badge(Play, t("playPre"), t("googlePlay"))}
+      </div>
+      <p className="mt-2 text-xs font-bold text-muted-foreground">{t("comingSoon")}</p>
+    </section>
   );
 }
 

@@ -98,3 +98,8 @@ Native apps call the **published HTTPS URL** for server functions; set it as the
 - Play: Data safety form, content rating, target audience (if children: Families policy).
 - App Store: privacy nutrition labels, age rating, mic usage explanation in review notes.
 - Screenshots per device size; icon from `resources/icon.png`.
+
+## Install as an app (PWA) and store badges
+- `public/manifest.webmanifest` makes the site installable; the build generates `/sw.js` (Workbox, network-first pages) for offline play.
+- The worker registers only on the published site — never in previews, iframes, dev, or inside the Capacitor apps. Add `?sw=off` to any URL to remove it.
+- The "Download App" section's App Store / Google Play badges are disabled until the store listings exist. When published, add the real listing URLs in `DownloadApp` (src/game/App.tsx).
