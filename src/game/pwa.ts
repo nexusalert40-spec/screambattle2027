@@ -1,4 +1,3 @@
-/// <reference types="vite-plugin-pwa/client" />
 // Single place that registers the offline service worker and tracks the browser's install prompt.
 import { useEffect, useState } from "react";
 import { Capacitor } from "@capacitor/core";
@@ -31,8 +30,8 @@ async function unregisterAppWorkers() {
 export async function setupServiceWorker() {
   if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
   if (refused()) { await unregisterAppWorkers(); return; }
-  const { registerSW } = await import("virtual:pwa-register");
-  registerSW({ immediate: true });
+  const { Workbox } = await import("workbox-window");
+  await new Workbox(SW_URL).register();
 }
 
 type InstallEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
