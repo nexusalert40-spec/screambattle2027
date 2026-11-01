@@ -1,4 +1,4 @@
-- [ ] Phase 2: Cloud backend, online rooms, global leaderboard (needs user go-ahead)
+- [ ] Phase 2: online rooms, global leaderboard (Lovable Cloud enabled 2026-11-01; needs user go-ahead on features)
 - [ ] Phase 3: real in-app purchases (billing interface ready; needs store accounts, products, verification backend)
 - [ ] Splash video asset (animated fallback in place)
 - [x] Add background battle music, muted during microphone measurement
