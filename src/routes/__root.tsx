@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { GTM_ID, trackingScripts } from "../lib/tracking";
 
 function NotFoundComponent() {
   return (
@@ -79,7 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#ff7a1a" },
-      { title: "Scream Battle" },
+      { name: "google-site-verification", content: "C5NIXmexTgdzFBnqZy9Q_3kU6JG6MvYebZdVjGihAt4" },
+      { name: "keywords", content: "scream battle, screaming game, scream game, don't scream game, microphone game, party game, loudness game" },
+      { property: "og:site_name", content: "Screambattle 2027" },
+      { title: "Screambattle 2027" },
       { name: "description", content: "Who can scream the loudest? A cartoon screaming game." },
       { property: "og:title", content: "Scream Battle" },
       { property: "og:description", content: "Who can scream the loudest? A cartoon screaming game." },
@@ -98,6 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
     ],
+    scripts: trackingScripts(),
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -112,6 +117,16 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        {GTM_ID && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
+        )}
         {children}
         <Scripts />
       </body>
