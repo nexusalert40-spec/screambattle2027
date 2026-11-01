@@ -9,6 +9,7 @@ import { Meter } from "./Meters";
 import { MicAnalyzer, type RoundResult } from "./mic";
 import { aiOpponentScore, decideWinner, type Difficulty } from "./scoring";
 import { sfx } from "./sfx";
+import { roundFinished, showRewardedAd } from "./ads";
 import { setupServiceWorker, useInstall } from "./pwa";
 import { Download, Apple, Play } from "lucide-react";
 
