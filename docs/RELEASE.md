@@ -103,3 +103,7 @@ Native apps call the **published HTTPS URL** for server functions; set it as the
 - `public/manifest.webmanifest` makes the site installable; the build generates `/sw.js` (Workbox, network-first pages) for offline play.
 - The worker registers only on the published site — never in previews, iframes, dev, or inside the Capacitor apps. Add `?sw=off` to any URL to remove it.
 - The "Download App" section's App Store / Google Play badges are disabled until the store listings exist. When published, add the real listing URLs in `DownloadApp` (src/game/App.tsx).
+
+## AdMob (Android)
+- App ID is in AndroidManifest.xml; rewarded interstitial unit in src/game/ads.ts, offered after every 3rd round with a Skip option.
+- Run `NATIVE_BUILD=1 bun run build && npx cap sync android`. Add app-ads.txt on your domain and set up the consent message in AdMob (Privacy & messaging). Ads are off on the website.

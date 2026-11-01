@@ -22,6 +22,7 @@
     "rolldown": "1.2.1"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^7",
     "@capacitor/app": "^7",
     "@capacitor/core": "^7",
     "@capacitor/splash-screen": "^7",

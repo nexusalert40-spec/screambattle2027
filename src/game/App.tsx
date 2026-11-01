@@ -9,6 +9,7 @@ import { Meter } from "./Meters";
 import { MicAnalyzer, type RoundResult } from "./mic";
 import { aiOpponentScore, decideWinner, type Difficulty } from "./scoring";
 import { sfx } from "./sfx";
+import { roundFinished, showRewardedAd } from "./ads";
 import { setupServiceWorker, useInstall } from "./pwa";
 import { Download, Apple, Play } from "lucide-react";
 
@@ -213,7 +214,9 @@ function MeterSelect({ onBack }: { onBack: () => void }) {
 function Results({ a, b, aName, bName, aChar, bChar, onRematch, onMenu }: { a: number; b: number; aName: string; bName: string; aChar: Character; bChar: Character; onRematch: () => void; onMenu: () => void }) {
   const g = useGame();
   const w = decideWinner(a, b);
-  useEffect(() => { w === "b" && bName === g.t("aiLabel") ? sfx.lose(g.sound) : sfx.win(g.sound); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const [adOffer, setAdOffer] = useState(false);
+  useEffect(() => { w === "b" && bName === g.t("aiLabel") ? sfx.lose(g.sound) : sfx.win(g.sound); setAdOffer(roundFinished()); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const ar = g.lang === "ar";
   const col = (name: string, score: number, c: Character, win: boolean, flip?: boolean) => (
     <div className="flex flex-1 flex-col items-center">
       <Avatar c={c} size={130} anim={w === "tie" ? "anim-bob" : win ? "anim-dance" : "anim-slump"} flip={flip} />
@@ -225,6 +228,15 @@ function Results({ a, b, aName, bName, aChar, bChar, onRematch, onMenu }: { a: n
     <div className="flex flex-1 flex-col items-center gap-4">
       <h2 className="anim-popin title-pop text-center text-5xl">{w === "tie" ? g.t("tie") : `${w === "a" ? aName : bName} ${g.t("wins")}`}</h2>
       <div className="flex w-full items-end">{col(aName, a, aChar, w === "a")}{col(bName, b, bChar, w === "b", true)}</div>
+      {adOffer && (
+        <div className="card-game w-full p-4 text-center">
+          <p className="mb-3 font-bold">{ar ? "شاهد إعلاناً قصيراً لدعم اللعبة المجانية وتحصل على شكر خاص!" : "Watch a short ad to support this free game?"}</p>
+          <div className="grid grid-cols-2 gap-3">
+            <GameButton onClick={() => { setAdOffer(false); void showRewardedAd(); }}>{ar ? "شاهد" : "Watch"}</GameButton>
+            <GameButton tone="ali" onClick={() => setAdOffer(false)}>{ar ? "تخطّ" : "Skip"}</GameButton>
+          </div>
+        </div>
+      )}
       <div className="grid w-full grid-cols-2 gap-3">
         <GameButton onClick={onRematch}>{g.t("rematch")}</GameButton>
         <GameButton tone="ali" onClick={onMenu}>{g.t("menu")}</GameButton>
