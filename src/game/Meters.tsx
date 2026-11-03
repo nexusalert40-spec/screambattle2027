@@ -58,7 +58,7 @@ function RocketMeter({ value, peak }: P) {
 /** Generic half-dial gauge used by speedometer, fuel and pressure styles. */
 function Dial({ value, peak, face, labels, icon, needle = "var(--destructive)" }: P & { face: string; labels: string[]; icon: string; needle?: string }) {
   const ang = (v: number) => -90 + (v / 100) * 180;
-  const pt = (v: number, r: number) => { const a = ((ang(v) - 90) * Math.PI) / 180; return [100 + r * Math.cos(a), 115 + r * Math.sin(a)]; };
+  const pt = (v: number, r: number): [number, number] => { const a = ((ang(v) - 90) * Math.PI) / 180; return [100 + r * Math.cos(a), 115 + r * Math.sin(a)]; };
   return (
     <svg viewBox="0 0 200 150" className={`w-full ${value > 85 ? "anim-shake" : ""}`}>
       <path d="M8 115 A92 92 0 0 1 192 115 L192 140 L8 140 Z" fill={face} stroke="var(--ink)" strokeWidth="5" />
