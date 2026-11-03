@@ -11,6 +11,8 @@ interface Settings {
   music: boolean;
   meter: MeterStyle;
   charId: string;
+  gender: "boy" | "girl" | null;
+  roomId: string;
   entitlements: string[];
   best: { practice: number; single: number; local: number };
 }
@@ -20,6 +22,8 @@ const DEFAULTS: Settings = {
   music: true,
   meter: "rpm",
   charId: "ali",
+  gender: null,
+  roomId: "ali",
   entitlements: [],
   best: { practice: 0, single: 0, local: 0 },
 };
@@ -63,7 +67,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Settings>;
         // Entitlements are never trusted from local storage; they must come from a verified store.
-        setS({ ...DEFAULTS, ...parsed, lang: isLang(parsed.lang) ? parsed.lang : DEFAULTS.lang, music: typeof parsed.music === "boolean" ? parsed.music : DEFAULTS.music, entitlements: [], best: { ...DEFAULTS.best, ...parsed.best } });
+        setS({ ...DEFAULTS, ...parsed, lang: isLang(parsed.lang) ? parsed.lang : DEFAULTS.lang, music: typeof parsed.music === "boolean" ? parsed.music : DEFAULTS.music, gender: parsed.gender === "boy" || parsed.gender === "girl" ? parsed.gender : null, entitlements: [], best: { ...DEFAULTS.best, ...parsed.best } });
       }
     } catch {}
     navigator.permissions
