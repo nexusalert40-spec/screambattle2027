@@ -183,7 +183,7 @@ function DonateCard() {
 }
 
 function PriceButton({ price, onClick }: { price: string; onClick: () => void }) {
-  return <button onClick={onClick} className="btn-game bg-sun-grad px-3 py-1 font-display text-sm">{price}</button>;
+  return <button onClick={onClick} className="btn-game bg-sun-grad whitespace-nowrap px-2 py-1 font-display text-sm">{price}</button>;
 }
 
 /* ---------- Gender onboarding ---------- */

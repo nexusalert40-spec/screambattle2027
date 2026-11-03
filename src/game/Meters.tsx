@@ -73,8 +73,8 @@ function ThemedMeter({ value, peak, theme }: P & { theme: Theme }) {
   return (
     <div className={`card-game w-full overflow-hidden p-4 ${hot && theme.shake ? "anim-shake" : ""}`} style={{ background: theme.bg }}>
       <div className="flex items-center justify-between">
-        <span className="leading-none transition-transform duration-100" style={{ fontSize: 48 + value * 0.5, transform: `rotate(${hot ? (value % 2 ? -8 : 8) : 0}deg)` }}>{hot ? theme.high : theme.low}</span>
-        <span className="title-white text-6xl tabular-nums">{value}</span>
+        <span className="leading-none transition-transform duration-100" style={{ fontSize: 34 + value * 0.3, transform: `rotate(${hot ? (value % 2 ? -8 : 8) : 0}deg)` }}>{hot ? theme.high : theme.low}</span>
+        <span className="title-white text-4xl tabular-nums">{value}</span>
       </div>
       {theme.wave && (
         <svg viewBox="0 0 200 80" className="mt-2 h-16 w-full"><polyline points={wave} fill="none" stroke="var(--card)" strokeWidth="4" strokeLinecap="round" /></svg>
