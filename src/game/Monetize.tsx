@@ -226,7 +226,7 @@ export function SuperMouthBadge({ onOpen }: { onOpen: () => void }) {
 export function PremiumScreen({ onBack }: { onBack: () => void }) {
   const g = useGame();
   const co = useCheckout();
-  const perks: [typeof Crown, string][] = [[Crown, g.t("premiumChars")], [DoorOpen, g.t("premiumRooms")], [Ban, g.t("premiumNoAds")]];
+  const perks: [typeof Crown, string][] = [[Crown, g.t("premiumChars")], [Gauge, `10 ${g.t("tabMeters")}`], [DoorOpen, g.t("premiumRooms")], [Ban, g.t("premiumNoAds")]];
   return (
     <Screen title={g.t("goPremium")} onBack={onBack}>
       <div className="bg-grape-grad relative overflow-hidden rounded-3xl border-[3px] border-ink p-4 text-center">
@@ -241,14 +241,14 @@ export function PremiumScreen({ onBack }: { onBack: () => void }) {
       </ul>
       {g.entitlements.includes(PREMIUM_ALL)
         ? <p className="title-white mt-5 text-center text-2xl">{g.t("owned")}</p>
-        : <GameButton className="mt-5 w-full py-4 text-3xl" onClick={() => co.open({ id: PREMIUM_ALL, name: g.t("premiumTitle"), price: PRICES.premium })}>{g.t("goPremium")} · {PRICES.premium}</GameButton>}
+        : <GameButton className="mt-5 w-full py-4 text-3xl" onClick={() => co.open({ id: PREMIUM_ALL, name: g.t("premiumTitle"), price: PRICES.premium })}>{g.t("unlockAll")} · {PRICES.premium}</GameButton>}
       {co.sheet}
     </Screen>
   );
 }
 
 /* ---------- Shop ---------- */
-type Tab = "chars" | "rooms" | "items";
+type Tab = "chars" | "meters" | "rooms" | "items";
 export function Shop({ onBack, onPremium }: { onBack: () => void; onPremium: () => void }) {
   const g = useGame();
   const co = useCheckout();
@@ -257,7 +257,7 @@ export function Shop({ onBack, onPremium }: { onBack: () => void; onPremium: () 
     { id: "scream-effects", name: g.t("packFx"), desc: g.t("packFxDesc"), price: "$0.99", icon: Volume2, tone: "bg-aicha-grad" },
     { id: "advanced-meters", name: g.t("packMeters"), desc: g.t("packMetersDesc"), price: "$1.99", icon: Gauge, tone: "bg-turq-grad" },
   ] as const;
-  const tabs: [Tab, string][] = [["chars", g.t("tabChars")], ["rooms", g.t("tabRooms")], ["items", g.t("tabItems")]];
+  const tabs: [Tab, string][] = [["chars", g.t("tabChars")], ["meters", g.t("tabMeters")], ["rooms", g.t("tabRooms")], ["items", g.t("tabItems")]];
   return (
     <Screen title={g.t("shop")} onBack={onBack}>
       <button onClick={onPremium} className="btn-game bg-grape-grad mb-4 flex items-center gap-3 rounded-3xl p-3 text-start">
@@ -265,9 +265,9 @@ export function Shop({ onBack, onPremium }: { onBack: () => void; onPremium: () 
         <span className="min-w-0 flex-1"><span className="title-white block text-2xl leading-tight">{g.t("goPremium")}</span><span className="block text-xs font-bold text-card">{g.t("premiumChars")} · {g.t("premiumRooms")} · {g.t("premiumNoAds")}</span></span>
         <span className="rounded-full border-2 border-ink bg-sun px-2 py-0.5 font-display">{PRICES.premium}</span>
       </button>
-      <div role="tablist" className="mb-4 grid grid-cols-3 gap-2">
+      <div role="tablist" className="mb-4 grid grid-cols-4 gap-1.5">
         {tabs.map(([k, l]) => (
-          <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`btn-game py-2 text-base ${tab === k ? "bg-sun-grad" : "bg-card"}`}>{l}</button>
+          <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`btn-game min-w-0 truncate px-1 py-2 text-sm ${tab === k ? "bg-sun-grad" : "bg-card"}`}>{l}</button>
         ))}
       </div>
       {tab === "chars" && (
@@ -281,6 +281,23 @@ export function Shop({ onBack, onPremium }: { onBack: () => void; onPremium: () 
               </div>
             </CharTile>
           ))}
+        </div>
+      )}
+      {tab === "meters" && (
+        <div className="grid grid-cols-2 gap-3">
+          {METERS.filter((m) => m !== FREE_METER).map((m) => {
+            const name = g.t(`m_${m}` as "m_fire");
+            const price = formatUsd(priceCents(meterEntitlement(m)) ?? 99);
+            return (
+              <div key={m} className="card-game p-2">
+                <Meter style={m} value={72} peak={88} />
+                <div className="mt-2 flex items-center justify-between gap-1">
+                  <p className="truncate font-display text-sm">{name}</p>
+                  {isMeterOwned(m, g.entitlements) ? <Check className="size-5" /> : <PriceButton price={price} onClick={() => co.open({ id: meterEntitlement(m), name, price })} />}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
       {tab === "rooms" && (
@@ -308,6 +325,7 @@ export function Shop({ onBack, onPremium }: { onBack: () => void; onPremium: () 
           ))}
         </div>
       )}
+      <DonateCard />
       {co.sheet}
     </Screen>
   );
@@ -339,7 +357,7 @@ export function Rooms({ onBack, onShop }: { onBack: () => void; onShop: () => vo
   const [active, setActive] = useState<number | null>(null);
   const [shout, setShout] = useState(false);
   const poke = (i: number) => { sfx.tap(g.sound); setActive(i); setTimeout(() => setActive((a) => (a === i ? null : a)), 900); };
-  const tapChar = () => { sfx.tap(g.sound); setShout(true); setTimeout(() => setShout(false), 900); };
+  const tapChar = () => { const k = (["cheerGo", "cheerChamp", "cheerBravo"] as const)[Math.floor(Math.random() * 3)]!; if (k === "cheerBravo") applause(g.sound); say(g.sound, g.t(k), g.lang); setShout(true); setTimeout(() => setShout(false), 900); };
   return (
     <Screen title={g.t("rooms")} onBack={onBack}>
       {/* Scene: wall, window, shelf, floor, character, tappable props */}
