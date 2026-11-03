@@ -1,3 +1,4 @@
+import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { STRINGS, isLang, type Lang, type StrKey } from "./i18n";
 import type { MicStatus } from "./mic";
@@ -37,7 +38,9 @@ interface Ctx extends Settings {
   setMic: (m: MicStatus) => void;
   setMeasuring: (on: boolean) => void;
 }
-const GameCtx = createContext<Ctx | null>(null);
+// Kept on globalThis so hot reloads of this file reuse one context instead of orphaning consumers.
+const g = globalThis as { __screamCtx?: React.Context<Ctx | null> };
+const GameCtx = (g.__screamCtx ??= createContext<Ctx | null>(null));
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [s, setS] = useState<Settings>(DEFAULTS);
