@@ -1,4 +1,4 @@
-import type { MeterStyle } from "./store";
+import type { MeterId } from "./catalog";
 
 interface P { value: number; peak: number }
 
@@ -55,43 +55,39 @@ function RocketMeter({ value, peak }: P) {
   );
 }
 
-function TmotorMeter({ value, peak }: P) {
-  const dur = value < 3 ? 0 : 2.2 - (value / 100) * 2;
-  return (
-    <svg viewBox="0 0 200 200" className="w-full">
-      <circle cx="100" cy="100" r="95" fill="var(--ink)" stroke="var(--turq)" strokeWidth="4" />
-      {[80, 62, 44].map((r, i) => (
-        <g key={r} style={{ transformOrigin: "100px 100px", animation: dur ? `spin ${dur * (i + 1) * 0.6}s linear infinite ${i % 2 ? "reverse" : ""}` : "none" }}>
-          <circle cx="100" cy="100" r={r} fill="none" stroke={i === 1 ? "var(--aicha)" : "var(--turq)"} strokeWidth="5" strokeDasharray={`${r / 2} ${r / 4}`} />
-        </g>
-      ))}
-      <circle cx="100" cy="100" r="88" fill="none" stroke="var(--sun)" strokeWidth="6" strokeDasharray={`${(peak / 100) * 553} 553`} transform="rotate(-90 100 100)" opacity="0.6" />
-      <circle cx="100" cy="100" r="88" fill="none" stroke={zoneColor(value)} strokeWidth="6" strokeDasharray={`${(value / 100) * 553} 553`} transform="rotate(-90 100 100)" style={{ transition: "stroke-dasharray 0.08s" }} />
-      <text x="100" y="114" textAnchor="middle" fontSize="40" fontFamily="var(--font-display)" fill="var(--card)">{value}</text>
-    </svg>
-  );
-}
+type Theme = { bg: string; low: string; high: string; bar: string; wave?: boolean; shake?: boolean };
+const THEMES: Record<Exclude<MeterId, "classic" | "rocket">, Theme> = {
+  fire: { bg: "linear-gradient(180deg, var(--ink), var(--destructive))", low: "🕯️", high: "🔥", bar: "linear-gradient(90deg, var(--sun), var(--destructive))" },
+  glass: { bg: "linear-gradient(180deg, var(--sky-deep), var(--turq))", low: "🥛", high: "💥", bar: "linear-gradient(90deg, var(--card), var(--turq))", shake: true },
+  quake: { bg: "linear-gradient(180deg, var(--sun), var(--ali))", low: "🏠", high: "🌋", bar: "linear-gradient(90deg, var(--ali), var(--destructive))", shake: true },
+  monster: { bg: "linear-gradient(180deg, var(--grape), var(--ink))", low: "👾", high: "👹", bar: "linear-gradient(90deg, var(--ali), var(--grape))", shake: true },
+  thunder: { bg: "linear-gradient(180deg, var(--ink), var(--sky-deep))", low: "☁️", high: "⛈️", bar: "linear-gradient(90deg, var(--turq), var(--sun))" },
+  energy: { bg: "linear-gradient(180deg, var(--aicha), var(--sun))", low: "🔋", high: "⚡", bar: "linear-gradient(90deg, var(--sun), var(--aicha))" },
+  sonic: { bg: "linear-gradient(180deg, var(--turq), var(--sky-deep))", low: "💨", high: "💫", bar: "linear-gradient(90deg, var(--card), var(--grape))", wave: true },
+  alien: { bg: "linear-gradient(180deg, var(--ink), var(--grape))", low: "🛸", high: "👽", bar: "linear-gradient(90deg, var(--ali), var(--turq))", wave: true },
+};
 
-function DigitalMeter({ value, peak }: P) {
-  const bars = 16;
+function ThemedMeter({ value, peak, theme }: P & { theme: Theme }) {
+  const hot = value > 75;
+  const wave = Array.from({ length: 41 }, (_, i) => `${i * 5},${40 + Math.sin(i * 0.9 + value / 6) * (value / 100) * 34}`).join(" ");
   return (
-    <div className="card-game w-full bg-ink p-4" style={{ background: "var(--ink)" }}>
-      <div className="flex items-end justify-between font-display">
-        <span className="text-7xl tabular-nums" style={{ color: zoneColor(value) }}>{String(value).padStart(3, "0")}</span>
-        <span className="text-lg text-sun">PEAK {peak}</span>
+    <div className={`card-game w-full overflow-hidden p-4 ${hot && theme.shake ? "anim-shake" : ""}`} style={{ background: theme.bg }}>
+      <div className="flex items-center justify-between">
+        <span className="leading-none transition-transform duration-100" style={{ fontSize: 34 + value * 0.3, transform: `rotate(${hot ? (value % 2 ? -8 : 8) : 0}deg)` }}>{hot ? theme.high : theme.low}</span>
+        <span className="title-white text-4xl tabular-nums">{value}</span>
       </div>
-      <div className="mt-3 flex h-24 items-end gap-1">
-        {[...Array(bars)].map((_, i) => {
-          const wobble = 0.6 + 0.4 * Math.abs(Math.sin(i * 1.7 + value / 9));
-          const h = Math.max(4, value * wobble);
-          return <div key={i} className="flex-1 rounded-sm transition-all duration-75" style={{ height: `${h}%`, background: zoneColor((i / bars) * 100) }} />;
-        })}
+      {theme.wave && (
+        <svg viewBox="0 0 200 80" className="mt-2 h-16 w-full"><polyline points={wave} fill="none" stroke="var(--card)" strokeWidth="4" strokeLinecap="round" /></svg>
+      )}
+      <div className="relative mt-3 h-6 overflow-hidden rounded-full border-[3px] border-ink bg-card">
+        <div className="h-full transition-[width] duration-75" style={{ width: `${value}%`, background: theme.bar }} />
+        <div className="absolute inset-y-0 w-1 bg-ink" style={{ insetInlineStart: `${peak}%` }} />
       </div>
     </div>
   );
 }
 
-export function Meter({ style, value, peak }: P & { style: MeterStyle }) {
-  const M = { rpm: RpmMeter, rocket: RocketMeter, tmotor: TmotorMeter, digital: DigitalMeter }[style];
-  return <div className="mx-auto w-full max-w-[300px]"><M value={value} peak={peak} /></div>;
+export function Meter({ style, value, peak }: P & { style: MeterId }) {
+  const inner = style === "classic" ? <RpmMeter value={value} peak={peak} /> : style === "rocket" ? <RocketMeter value={value} peak={peak} /> : <ThemedMeter value={value} peak={peak} theme={THEMES[style]} />;
+  return <div className="mx-auto w-full max-w-[300px]">{inner}</div>;
 }

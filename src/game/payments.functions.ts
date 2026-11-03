@@ -6,10 +6,10 @@ import { formatUsd, priceCents } from "./catalog";
 
 /* PayPal Orders v2. Credentials stay on the server; nothing unlocks until a capture is verified here. */
 async function paypal() {
-  const id = process.env.PAYPAL_CLIENT_ID;
-  const secret = process.env.PAYPAL_CLIENT_SECRET;
+  const id = process.env['PAYPAL_CLIENT_ID'];
+  const secret = process.env['PAYPAL_CLIENT_SECRET'];
   if (!id || !secret) throw new Error("PayPal is not configured yet.");
-  const env = process.env.PAYPAL_ENV === "live" ? "live" : "sandbox";
+  const env = process.env['PAYPAL_ENV'] === "live" ? "live" : "sandbox";
   const base = env === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
   const res = await fetch(`${base}/v1/oauth2/token`, {
     method: "POST",
@@ -44,10 +44,10 @@ export const createPaypalOrder = createServerFn({ method: "POST" })
       }),
     });
     if (!r.ok) throw new Error(`PayPal could not start the payment (${r.status}).`);
-    const links = (r.body.links as { rel: string; href: string }[] | undefined) ?? [];
+    const links = (r.body['links'] as { rel: string; href: string }[] | undefined) ?? [];
     const approve = links.find((l) => l.rel === "approve" || l.rel === "payer-action")?.href;
     if (!approve) throw new Error("PayPal did not return a checkout link.");
-    return { orderId: r.body.id as string, approveUrl: approve };
+    return { orderId: r.body['id'] as string, approveUrl: approve };
   });
 
 type Capture = { id: string; status: string; amount: { currency_code: string; value: string } };
@@ -60,13 +60,13 @@ export const capturePaypalOrder = createServerFn({ method: "POST" })
     const { env, call } = await paypal();
     let order = await call(`/v2/checkout/orders/${data.orderId}`);
     if (!order.ok) throw new Error("Payment not found.");
-    if (order.body.status === "APPROVED") {
+    if (order.body['status'] === "APPROVED") {
       const cap = await call(`/v2/checkout/orders/${data.orderId}/capture`, { method: "POST", body: "{}" });
       if (cap.ok) order = cap;
       else order = await call(`/v2/checkout/orders/${data.orderId}`);
     }
-    if (order.body.status !== "COMPLETED") return { status: "pending" as const };
-    const unit = ((order.body.purchase_units as Unit[] | undefined) ?? [])[0];
+    if (order.body['status'] !== "COMPLETED") return { status: "pending" as const };
+    const unit = ((order.body['purchase_units'] as Unit[] | undefined) ?? [])[0];
     const [uid, productId] = (unit?.custom_id ?? "").split("|");
     if (uid !== context.userId || !productId) throw new Error("This payment belongs to another account.");
     const capture = unit?.payments?.captures?.[0];

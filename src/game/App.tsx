@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { Lock, Mic, MicOff, Settings as Cog, ShoppingBag, Trophy, Users, Globe, Gauge, Volume2, VolumeX, Zap, Dumbbell, Bot, Check, Crown } from "lucide-react";
-import { GameProvider, useGame, type MeterStyle } from "./store";
+import { GameProvider, useGame } from "./store";
+import { METERS, isMeterOwned, type MeterId } from "./catalog";
+import { cheerFor } from "./reactions";
 import { CHARACTERS, getChar, isOwned, characterName, type Character } from "./characters";
 import { LanguageSelect } from "./LanguageSelect";
 import { Avatar, CharTile, GameButton, Screen, Waves } from "./ui";
 import { Round } from "./Round";
-import { GenderModal, PremiumScreen, Rooms, Shop, SuperMouthBadge } from "./Monetize";
+import { GenderModal, PaypalReturn, PremiumScreen, Rooms, Shop, SuperMouthBadge } from "./Monetize";
 import { PREMIUM_ALL } from "./characters";
 import { Meter } from "./Meters";
 import { MicAnalyzer, type RoundResult } from "./mic";
 import { aiOpponentScore, decideWinner, type Difficulty } from "./scoring";
-import { sfx } from "./sfx";
+import { applause, say, sfx } from "./sfx";
+import { supabase } from "@/integrations/supabase/client";
 import { roundFinished, showRewardedAd } from "./ads";
 import { setupServiceWorker, useInstall } from "./pwa";
 import { Download, Apple, Play, Home } from "lucide-react";
@@ -30,7 +33,7 @@ function Shell() {
     case "splash": return <Splash onDone={home} />;
     case "menu": return <Menu go={go} />;
     case "chars": return <CharSelect onBack={home} />;
-    case "meters": return <MeterSelect onBack={home} />;
+    case "meters": return <MeterSelect onBack={home} onShop={() => go("shop")} />;
     case "single": return <Single onBack={home} />;
     case "local": return <Local onBack={home} />;
     case "practice": return <Practice onBack={home} />;
@@ -123,6 +126,7 @@ function Menu({ go }: { go: (v: View) => void }) {
       <SuperMouthBadge onOpen={() => go("shop")} />
       <DownloadApp />
       <GenderModal />
+      <PaypalReturn />
     </div>
   );
 }
@@ -200,24 +204,36 @@ function CharSelect({ onBack }: { onBack: () => void }) {
 }
 
 /* ---------- Meters ---------- */
-const METERS: MeterStyle[] = ["rpm", "rocket", "tmotor", "digital"];
-function MeterSelect({ onBack }: { onBack: () => void }) {
+const meterName = (t: (k: never) => string, m: MeterId) => (t as (k: string) => string)(`m_${m}`);
+function MeterSelect({ onBack, onShop }: { onBack: () => void; onShop: () => void }) {
   const g = useGame();
   const [demo, setDemo] = useState(0);
   useEffect(() => { const i = setInterval(() => setDemo((d) => (d + 7) % 100), 120); return () => clearInterval(i); }, []);
   return (
     <Screen title={g.t("chooseMeter")} onBack={onBack}>
       <div className="grid grid-cols-2 gap-3">
-        {METERS.map((m) => (
-          <button key={m} onClick={() => g.set({ meter: m })} className={`card-game relative p-2 ${g.meter === m ? "ring-4 ring-sun" : ""}`}>
-            <Meter style={m} value={demo} peak={80} />
-            <p className="font-display mt-1 text-lg">{g.t(m)}</p>
-            {g.meter === m && <Check className="absolute end-2 top-2 size-6 rounded-full bg-sun p-1" strokeWidth={4} />}
-          </button>
-        ))}
+        {METERS.map((m) => {
+          const own = isMeterOwned(m, g.entitlements);
+          return (
+            <button key={m} onClick={() => (own ? g.set({ meter: m }) : onShop())} aria-label={own ? meterName(g.t, m) : `${meterName(g.t, m)} — ${g.t("meterLocked")}`} className={`card-game relative p-2 ${g.meter === m ? "ring-4 ring-sun" : ""}`}>
+              <div className={own ? "" : "opacity-60"}><Meter style={m} value={demo} peak={80} /></div>
+              <p className="font-display mt-1 text-base leading-tight">{meterName(g.t, m)}</p>
+              {g.meter === m && <Check className="absolute end-2 top-2 size-6 rounded-full bg-sun p-1" strokeWidth={4} />}
+              {!own && <Lock className="absolute end-2 top-2 size-7 rounded-full border-2 border-ink bg-card p-1" />}
+            </button>
+          );
+        })}
       </div>
     </Screen>
   );
+}
+
+/** Motivational reaction after the microphone has stopped (never during measurement). */
+function cheer(g: { sound: boolean; lang: string; t: (k: "cheerGo" | "cheerChamp" | "cheerBravo") => string }, peak: number) {
+  const c = cheerFor(peak);
+  if (!c) return;
+  if (c !== "go") applause(g.sound, c === "bravo" ? 2.4 : 1.4);
+  setTimeout(() => say(g.sound, g.t(c === "go" ? "cheerGo" : c === "champ" ? "cheerChamp" : "cheerBravo"), g.lang), 300);
 }
 
 /* ---------- Results ---------- */
@@ -225,7 +241,7 @@ function Results({ a, b, aName, bName, aChar, bChar, onRematch, onMenu }: { a: n
   const g = useGame();
   const w = decideWinner(a, b);
   const [adOffer, setAdOffer] = useState(false);
-  useEffect(() => { w === "b" && bName === g.t("aiLabel") ? sfx.lose(g.sound) : sfx.win(g.sound); setAdOffer(roundFinished() && !g.entitlements.includes(PREMIUM_ALL)); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { w === "b" && bName === g.t("aiLabel") ? sfx.lose(g.sound) : sfx.win(g.sound); setTimeout(() => cheer(g, Math.max(a, b)), 700); setAdOffer(roundFinished() && !g.entitlements.includes(PREMIUM_ALL)); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const ar = g.lang === "ar";
   const col = (name: string, score: number, c: Character, win: boolean, flip?: boolean) => (
     <div className="flex flex-1 flex-col items-center">
@@ -357,7 +373,7 @@ function Practice({ onBack }: { onBack: () => void }) {
           <GameButton className="w-full" onClick={() => { setLast(null); setKey((k) => k + 1); }}>{g.t("tryAgain")}</GameButton>
         </div>
       ) : (
-        <Round key={key} label={g.t("getReady")} char={me} autoStart={key > 0} onDone={(r) => { setLast(r); if (r.valid) g.recordBest("practice", r.peak); }} />
+        <Round key={key} label={g.t("getReady")} char={me} autoStart={key > 0} onDone={(r) => { setLast(r); if (r.valid) { g.recordBest("practice", r.peak); cheer(g, r.peak); } }} />
       )}
     </Screen>
   );
@@ -401,12 +417,14 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
     <Screen title={t("settings")} onBack={onBack}>
       <div className="card-game px-4">
         <div className="border-b-2 py-3"><p className="mb-2 font-bold">{t("language")}</p><LanguageSelect /></div>
+        <Row label={t("gender")}>{(["boy", "girl"] as const).map((k) => <Pill key={k} on={g.gender === k} onClick={() => g.set({ gender: k, charId: k === "boy" ? "ali" : "aicha", roomId: k === "boy" ? "ali" : "aicha" })}>{t(k)}</Pill>)}</Row>
         <Row label={t("sound")}><Pill on={g.sound} onClick={() => g.set({ sound: true })}>{t("on")}</Pill><Pill on={!g.sound} onClick={() => g.set({ sound: false })}>{t("off")}</Pill></Row>
         <Row label={t("music")}><Pill on={g.music} onClick={() => g.set({ music: true })}>{t("on")}</Pill><Pill on={!g.music} onClick={() => g.set({ music: false })}>{t("off")}</Pill></Row>
         <div className="border-b-2 py-3">
           <p className="mb-2 font-bold">{t("meterStyle")}</p>
-          <div className="grid grid-cols-2 gap-2">{METERS.map((m) => <Pill key={m} on={g.meter === m} onClick={() => g.set({ meter: m })}>{t(m)}</Pill>)}</div>
+          <div className="grid grid-cols-2 gap-2">{METERS.filter((m) => isMeterOwned(m, g.entitlements)).map((m) => <Pill key={m} on={g.meter === m} onClick={() => g.set({ meter: m })}>{meterName(t, m)}</Pill>)}</div>
         </div>
+        {g.user && <Row label={`${t("signedInAs")} ${g.user.email ?? ""}`}><Pill on={false} onClick={() => void supabase.auth.signOut()}>{t("signOut")}</Pill></Row>}
         <p className="py-3 text-sm text-muted-foreground">{t("privacy")}</p>
       </div>
       {!MicAnalyzer.supported() && <p className="card-game mt-4 p-3 font-bold">{t("micUnsupported")}</p>}

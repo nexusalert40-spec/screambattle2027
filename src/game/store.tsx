@@ -3,8 +3,10 @@ import { createContext, useCallback, useContext, useEffect, useState, type React
 import { STRINGS, isLang, type Lang, type StrKey } from "./i18n";
 import type { MicStatus } from "./mic";
 import { BattleMusic, shouldPlayMusic } from "./music";
+import { FREE_METER, isMeterId, isMeterOwned, type MeterId } from "./catalog";
+import { supabase } from "@/integrations/supabase/client";
 
-export type MeterStyle = "rpm" | "rocket" | "tmotor" | "digital";
+export type MeterStyle = MeterId;
 
 interface Settings {
   lang: Lang;
@@ -21,7 +23,7 @@ const DEFAULTS: Settings = {
   lang: "en",
   sound: true,
   music: true,
-  meter: "rpm",
+  meter: FREE_METER,
   charId: "ali",
   gender: null,
   roomId: "ali",
@@ -37,6 +39,9 @@ interface Ctx extends Settings {
   mic: MicStatus;
   setMic: (m: MicStatus) => void;
   setMeasuring: (on: boolean) => void;
+  /** Signed-in account (only needed for purchases). */
+  user: { id: string; email: string | null } | null;
+  refreshEntitlements: () => Promise<void>;
 }
 // Kept on globalThis so hot reloads of this file reuse one context instead of orphaning consumers.
 const g = globalThis as { __screamCtx?: React.Context<Ctx | null> };
@@ -48,6 +53,25 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [measuring, setMeasuring] = useState(false);
   const [visible, setVisible] = useState(true);
   const [musicPlayer] = useState(() => new BattleMusic());
+  const [user, setUser] = useState<Ctx["user"]>(null);
+  // Entitlements come only from verified purchase rows in the backend.
+  const refreshEntitlements = useCallback(async () => {
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) { setS((o) => ({ ...o, entitlements: [] })); return; }
+    const { data } = await supabase.from("purchases").select("product_id");
+    setS((o) => ({ ...o, entitlements: [...new Set((data ?? []).map((r) => r.product_id))] }));
+  }, []);
+  useEffect(() => {
+    const apply = (session: { user: { id: string; email?: string | null } } | null) =>
+      setUser(session ? { id: session.user.id, email: session.user.email ?? null } : null);
+    void supabase.auth.getSession().then(({ data }) => { apply(data.session); if (data.session) void refreshEntitlements(); });
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      apply(session);
+      void refreshEntitlements();
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [refreshEntitlements]);
 
   useEffect(() => {
     const unlock = () => { void musicPlayer.unlock().catch(() => {}); };
@@ -70,7 +94,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Settings>;
         // Entitlements are never trusted from local storage; they must come from a verified store.
-        setS({ ...DEFAULTS, ...parsed, lang: isLang(parsed.lang) ? parsed.lang : DEFAULTS.lang, music: typeof parsed.music === "boolean" ? parsed.music : DEFAULTS.music, gender: parsed.gender === "boy" || parsed.gender === "girl" ? parsed.gender : null, entitlements: [], best: { ...DEFAULTS.best, ...parsed.best } });
+        setS({ ...DEFAULTS, ...parsed, lang: isLang(parsed.lang) ? parsed.lang : DEFAULTS.lang, music: typeof parsed.music === "boolean" ? parsed.music : DEFAULTS.music, meter: isMeterId(parsed.meter) ? parsed.meter : FREE_METER, gender: parsed.gender === "boy" || parsed.gender === "girl" ? parsed.gender : null, entitlements: [], best: { ...DEFAULTS.best, ...parsed.best } });
       }
     } catch {}
     navigator.permissions
@@ -95,7 +119,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setS((o) => { if (score <= o.best[mode]) return o; const n = { ...o, best: { ...o.best, [mode]: score } }; persist(n); return n; }), []);
   const t = useCallback((k: StrKey) => STRINGS[s.lang][k], [s.lang]);
 
-  return <GameCtx.Provider value={{ ...s, set, recordBest, t, mic, setMic, setMeasuring }}>{children}</GameCtx.Provider>;
+  return <GameCtx.Provider value={{ ...s, meter: isMeterOwned(s.meter, s.entitlements) ? s.meter : FREE_METER, set, recordBest, t, mic, setMic, setMeasuring, user, refreshEntitlements }}>{children}</GameCtx.Provider>;
 }
 
 export function useGame() {
