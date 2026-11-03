@@ -286,7 +286,7 @@ export function Shop({ onBack, onPremium }: { onBack: () => void; onPremium: () 
       {tab === "meters" && (
         <div className="grid grid-cols-2 gap-3">
           {METERS.filter((m) => m !== FREE_METER).map((m) => {
-            const name = g.t(`m_${m}` as "m_fire");
+            const name = g.t(`m_${m}` as "m_speed");
             const price = formatUsd(priceCents(meterEntitlement(m)) ?? 99);
             return (
               <div key={m} className="card-game p-2">
