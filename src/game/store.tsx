@@ -1,3 +1,4 @@
+import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { STRINGS, isLang, type Lang, type StrKey } from "./i18n";
 import type { MicStatus } from "./mic";
@@ -11,6 +12,8 @@ interface Settings {
   music: boolean;
   meter: MeterStyle;
   charId: string;
+  gender: "boy" | "girl" | null;
+  roomId: string;
   entitlements: string[];
   best: { practice: number; single: number; local: number };
 }
@@ -20,6 +23,8 @@ const DEFAULTS: Settings = {
   music: true,
   meter: "rpm",
   charId: "ali",
+  gender: null,
+  roomId: "ali",
   entitlements: [],
   best: { practice: 0, single: 0, local: 0 },
 };
@@ -33,7 +38,9 @@ interface Ctx extends Settings {
   setMic: (m: MicStatus) => void;
   setMeasuring: (on: boolean) => void;
 }
-const GameCtx = createContext<Ctx | null>(null);
+// Kept on globalThis so hot reloads of this file reuse one context instead of orphaning consumers.
+const g = globalThis as { __screamCtx?: React.Context<Ctx | null> };
+const GameCtx = (g.__screamCtx ??= createContext<Ctx | null>(null));
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [s, setS] = useState<Settings>(DEFAULTS);
@@ -63,7 +70,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Settings>;
         // Entitlements are never trusted from local storage; they must come from a verified store.
-        setS({ ...DEFAULTS, ...parsed, lang: isLang(parsed.lang) ? parsed.lang : DEFAULTS.lang, music: typeof parsed.music === "boolean" ? parsed.music : DEFAULTS.music, entitlements: [], best: { ...DEFAULTS.best, ...parsed.best } });
+        setS({ ...DEFAULTS, ...parsed, lang: isLang(parsed.lang) ? parsed.lang : DEFAULTS.lang, music: typeof parsed.music === "boolean" ? parsed.music : DEFAULTS.music, gender: parsed.gender === "boy" || parsed.gender === "girl" ? parsed.gender : null, entitlements: [], best: { ...DEFAULTS.best, ...parsed.best } });
       }
     } catch {}
     navigator.permissions

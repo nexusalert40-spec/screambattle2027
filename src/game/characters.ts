@@ -4,6 +4,10 @@ import hero from "@/assets/char-hero.png";
 import astro from "@/assets/char-astro.png";
 import robot from "@/assets/char-robot.png";
 import wizard from "@/assets/char-wizard.png";
+import ninja from "@/assets/char-ninja.png";
+import dino from "@/assets/char-dino.png";
+import rockstar from "@/assets/char-rockstar.png";
+import pirate from "@/assets/char-pirate.png";
 import aliShout from "@/assets/char-ali-shout.png";
 import aichaShout from "@/assets/char-aicha-shout.png";
 import heroShout from "@/assets/char-hero-shout.png";
@@ -30,6 +34,10 @@ export const CHARACTERS: Character[] = [
   { id: "hero", name: { en: "Captain Loud", ar: "كابتن صوت" }, image: hero, theme: "sun", tier: "premium" },
   { id: "astro", name: { en: "Nova", ar: "نوفا" }, image: astro, theme: "turq", tier: "premium" },
   { id: "wizard", name: { en: "Zizo the Wizard", ar: "زيزو الساحر" }, image: wizard, theme: "grape", tier: "premium" },
+  { id: "ninja", name: { en: "Kiko Ninja", ar: "كيكو النينجا" }, image: ninja, theme: "sun", tier: "premium" },
+  { id: "dino", name: { en: "Rawr-a", ar: "رورا" }, image: dino, theme: "ali", tier: "premium" },
+  { id: "rockstar", name: { en: "Lulu Rock", ar: "لولو روك" }, image: rockstar, theme: "grape", tier: "premium" },
+  { id: "pirate", name: { en: "Captain Yoho", ar: "القبطان يوهو" }, image: pirate, theme: "aicha", tier: "premium" },
 ];
 
 export const themeBg: Record<Theme, string> = {
@@ -50,6 +58,7 @@ export function getChar(id: string): Character {
 }
 
 /** Owned = free, or granted by a verified entitlement (none until store billing is configured). */
+export const PREMIUM_ALL = "premium-all";
 export function isOwned(c: Character, entitlements: string[]) {
-  return c.tier === "free" || entitlements.includes(c.id);
+  return c.tier === "free" || entitlements.includes(c.id) || entitlements.includes(PREMIUM_ALL);
 }
