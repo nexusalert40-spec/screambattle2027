@@ -63,7 +63,7 @@ function AuthStep() {
       <form onSubmit={submit} className="mt-3 flex flex-col gap-2">
         <label className="font-bold">{t("email")}<input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full rounded-2xl border-[3px] border-ink bg-card px-3 py-2 font-sans" /></label>
         <label className="font-bold">{t("password")}<input type="password" required minLength={6} autoComplete={mode === "up" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 w-full rounded-2xl border-[3px] border-ink bg-card px-3 py-2 font-sans" /></label>
-        <GameButton type="submit" disabled={busy} className="mt-1 w-full py-3 text-xl">{mode === "up" ? t("createAccount") : t("signIn")}</GameButton>
+        <button type="submit" disabled={busy} className="btn-game bg-sun-grad mt-1 w-full py-3 font-display text-xl">{mode === "up" ? t("createAccount") : t("signIn")}</button>
       </form>
       <button onClick={() => setMode(mode === "up" ? "in" : "up")} className="mt-3 w-full text-center text-sm font-bold underline">{mode === "up" ? t("haveAccount") : t("needAccount")}</button>
       {msg && <p role="status" className="mt-3 rounded-2xl bg-muted p-3 text-sm font-bold">{msg}</p>}
