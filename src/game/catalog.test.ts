@@ -18,7 +18,7 @@ describe("scream meters", () => {
   it("only the Classic meter is free", () => expect(METERS.filter((m) => isMeterOwned(m, []))).toEqual(["classic"]));
   it("Premium unlocks every meter", () => expect(METERS.every((m) => isMeterOwned(m, ["premium-all"]))).toBe(true));
   it("a single meter purchase unlocks only that meter", () => {
-    expect(isMeterOwned("fire", ["meter:fire"])).toBe(true);
-    expect(isMeterOwned("alien", ["meter:fire"])).toBe(false);
+    expect(isMeterOwned("speed", ["meter:speed"])).toBe(true);
+    expect(isMeterOwned("battery", ["meter:speed"])).toBe(false);
   });
 });

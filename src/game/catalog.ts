@@ -7,7 +7,7 @@ export const SUPER_MOUTH = "super-mouth";
 export const ADVANCED_METERS = "advanced-meters";
 export const SCREAM_EFFECTS = "scream-effects";
 
-export const METERS = ["classic", "fire", "glass", "quake", "monster", "rocket", "thunder", "energy", "sonic", "alien"] as const;
+export const METERS = ["classic", "speed", "fuel", "heat", "pressure", "watch", "rocket", "decibel", "wave", "battery"] as const;
 export type MeterId = (typeof METERS)[number];
 export const FREE_METER: MeterId = "classic";
 export const isMeterId = (v: unknown): v is MeterId => METERS.includes(v as MeterId);
