@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Ban, Check, Crown, DoorOpen, Gauge, Lock, Volume2, X } from "lucide-react";
 import superMouth from "@/assets/super-mouth.png";
 import { useGame } from "./store";
-import { CHARACTERS, characterName, getChar, isOwned, PREMIUM_ALL, type Character } from "./characters";
+import { CHARACTERS, themeBg, characterName, getChar, isOwned, PREMIUM_ALL, type Character } from "./characters";
 import { ROOMS, isRoomOwned, PRICES, SUPER_MOUTH, type Reaction, type Room } from "./rooms";
 import { Avatar, CharTile, GameButton, Screen } from "./ui";
 import { sfx } from "./sfx";
@@ -187,7 +187,7 @@ function Row({ icon, title, desc, children }: { icon: ReactNode; title: string; 
 }
 
 function RoomThumb({ room, c }: { room: Room; c: Character }) {
-  return <span className={`bg-${c.theme === "sun" ? "sun" : c.theme}-grad relative grid size-14 place-items-center overflow-hidden rounded-2xl border-[3px] border-ink`}><img src={c.image} alt="" loading="lazy" className="size-12 object-contain" /><span className="absolute end-0.5 top-0 text-sm">{room.window}</span></span>;
+  return <span className={`${themeBg[c.theme]} relative grid size-14 place-items-center overflow-hidden rounded-2xl border-[3px] border-ink`}><img src={c.image} alt="" loading="lazy" className="size-12 object-contain" /><span className="absolute end-0.5 top-0 text-sm">{room.window}</span></span>;
 }
 
 /* ---------- Interactive Screaming Rooms ---------- */
@@ -206,7 +206,7 @@ export function Rooms({ onBack, onShop }: { onBack: () => void; onShop: () => vo
   return (
     <Screen title={g.t("rooms")} onBack={onBack}>
       {/* Scene: wall, window, shelf, floor, character, tappable props */}
-      <div className={`bg-${c.theme}-grad relative aspect-[3/4] w-full overflow-hidden rounded-3xl border-[3px] border-ink`}>
+      <div className={`${themeBg[c.theme]} relative aspect-[3/4] w-full overflow-hidden rounded-3xl border-[3px] border-ink`}>
         <div className="absolute inset-x-0 bottom-0 h-[30%] border-t-[3px] border-ink bg-card/70" />
         <div className="absolute inset-x-[30%] bottom-[24%] h-[8%] rounded-[50%] bg-ink/20" />
         <div className="absolute start-[6%] top-[8%] grid size-[24%] place-items-center rounded-2xl border-[3px] border-ink bg-card/80 text-4xl">{room.window}</div>

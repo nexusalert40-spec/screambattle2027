@@ -5,15 +5,17 @@ import { CHARACTERS, getChar, isOwned, characterName, type Character } from "./c
 import { LanguageSelect } from "./LanguageSelect";
 import { Avatar, CharTile, GameButton, Screen, Waves } from "./ui";
 import { Round } from "./Round";
+import { GenderModal, PremiumScreen, Rooms, Shop, SuperMouthBadge } from "./Monetize";
+import { PREMIUM_ALL } from "./characters";
 import { Meter } from "./Meters";
 import { MicAnalyzer, type RoundResult } from "./mic";
 import { aiOpponentScore, decideWinner, type Difficulty } from "./scoring";
 import { sfx } from "./sfx";
 import { roundFinished, showRewardedAd } from "./ads";
 import { setupServiceWorker, useInstall } from "./pwa";
-import { Download, Apple, Play } from "lucide-react";
+import { Download, Apple, Play, Home } from "lucide-react";
 
-type View = "splash" | "menu" | "chars" | "meters" | "single" | "local" | "practice" | "online" | "leader" | "shop" | "settings";
+type View = "splash" | "menu" | "chars" | "meters" | "single" | "local" | "practice" | "online" | "leader" | "shop" | "settings" | "premium" | "rooms";
 
 export function ScreamBattle() {
   return <GameProvider><Shell /></GameProvider>;
@@ -34,7 +36,9 @@ function Shell() {
     case "practice": return <Practice onBack={home} />;
     case "online": return <Info view="online" onBack={home} />;
     case "leader": return <Info view="leader" onBack={home} />;
-    case "shop": return <Shop onBack={home} />;
+    case "shop": return <Shop onBack={home} onPremium={() => go("premium")} />;
+    case "premium": return <PremiumScreen onBack={() => go("shop")} />;
+    case "rooms": return <Rooms onBack={home} onShop={() => go("shop")} />;
     case "settings": return <SettingsScreen onBack={home} />;
   }
 }
@@ -112,7 +116,13 @@ function Menu({ go }: { go: (v: View) => void }) {
           </button>
         ))}
       </div>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <GameButton tone="turq" onClick={() => go("rooms")} className="flex items-center justify-center gap-2"><Home className="size-5" />{t("rooms")}</GameButton>
+        <GameButton tone="grape" onClick={() => go("premium")} className="flex items-center justify-center gap-2"><Crown className="size-5" />{t("goPremium")}</GameButton>
+      </div>
+      <SuperMouthBadge onOpen={() => go("shop")} />
       <DownloadApp />
+      <GenderModal />
     </div>
   );
 }
@@ -215,7 +225,7 @@ function Results({ a, b, aName, bName, aChar, bChar, onRematch, onMenu }: { a: n
   const g = useGame();
   const w = decideWinner(a, b);
   const [adOffer, setAdOffer] = useState(false);
-  useEffect(() => { w === "b" && bName === g.t("aiLabel") ? sfx.lose(g.sound) : sfx.win(g.sound); setAdOffer(roundFinished()); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { w === "b" && bName === g.t("aiLabel") ? sfx.lose(g.sound) : sfx.win(g.sound); setAdOffer(roundFinished() && !g.entitlements.includes(PREMIUM_ALL)); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const ar = g.lang === "ar";
   const col = (name: string, score: number, c: Character, win: boolean, flip?: boolean) => (
     <div className="flex flex-1 flex-col items-center">
@@ -376,44 +386,6 @@ function Info({ view, onBack }: { view: "online" | "leader"; onBack: () => void 
 }
 
 /* ---------- Shop (preview only — purchases disabled until seller verification) ---------- */
-function Shop({ onBack }: { onBack: () => void }) {
-  const g = useGame();
-  const premium = CHARACTERS.filter((c) => c.tier === "premium");
-  const products = [
-    { id: "premium-characters", name: g.t("packChars"), desc: g.t("packCharsDesc"), price: "$0.99", icon: Crown, tone: "bg-grape-grad" },
-    { id: "scream-effects", name: g.t("packFx"), desc: g.t("packFxDesc"), price: "$0.99", icon: Volume2, tone: "bg-aicha-grad" },
-    { id: "advanced-meters", name: g.t("packMeters"), desc: g.t("packMetersDesc"), price: "$1.99", icon: Gauge, tone: "bg-turq-grad" },
-  ] as const;
-  return (
-    <Screen title={g.t("shop")} onBack={onBack}>
-      <div className="card-game mb-4 flex items-center gap-3 p-3 text-sm font-semibold"><Lock className="size-6 shrink-0" />{g.t("buyDisabled")}</div>
-      <div className="flex flex-col gap-3">
-        {products.map((p) => (
-          <div key={p.id} className="card-game flex items-center gap-3 p-3">
-            <span className={`btn-game ${p.tone} grid size-14 shrink-0 place-items-center rounded-2xl`}><p.icon className="size-7 text-ink" /></span>
-            <div className="min-w-0 flex-1">
-              <p className="font-display text-lg leading-tight">{p.name}</p>
-              <p className="text-xs font-semibold text-muted-foreground">{p.desc}</p>
-            </div>
-            <div className="flex shrink-0 flex-col items-center gap-1">
-              <span className="rounded-full border-2 border-ink bg-sun px-2 py-0.5 font-display text-sm">{p.price}</span>
-              <button disabled aria-disabled className="btn-game bg-card cursor-not-allowed px-3 py-1 text-xs opacity-60">{g.t("needsBackend")}</button>
-            </div>
-          </div>
-        ))}
-      </div>
-      <p className="title-white mt-5 text-center text-xl">{g.t("packChars")}</p>
-      <div className="mt-2 grid grid-cols-3 gap-3">
-        {premium.map((c) => (
-          <CharTile key={c.id} c={c}>
-            <img src={c.image} alt={c.name.en} loading="lazy" className="aspect-square w-full object-contain p-2" />
-            <p className="title-white truncate px-1 pb-1 text-center text-sm">{characterName(c, g.lang)}</p>
-          </CharTile>
-        ))}
-      </div>
-    </Screen>
-  );
-}
 
 /* ---------- Settings ---------- */
 function SettingsScreen({ onBack }: { onBack: () => void }) {
