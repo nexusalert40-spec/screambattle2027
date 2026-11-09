@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 const ORIGIN = "https://screambattle.fun";
 // Add every new public page here so it appears in the sitemap.
-const PUBLIC_PATHS = ["/"];
+const PUBLIC_PATHS = ["/", "/contact", "/privacy", "/terms", "/report"];
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {

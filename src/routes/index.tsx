@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ScreamBattle } from "@/game/App";
+import { SiteLinks } from "@/components/InfoPage";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -16,5 +17,5 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "https://screambattle.fun/" }],
   }),
-  component: ScreamBattle,
+  component: () => (<><ScreamBattle /><SiteLinks /></>),
 });
