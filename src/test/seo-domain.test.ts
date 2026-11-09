@@ -10,7 +10,7 @@ describe("Primary domain for Google indexing", () => {
   });
 
   it("lists the custom domain in the sitemap", () => {
-    const source = read("src/routes/sitemap[.]xml.ts");
+    const source = read("public/sitemap.xml");
     expect(source.match(/const ORIGIN = "([^"]+)"/)?.[1]).toBe("https://screambattle.fun");
   });
 
