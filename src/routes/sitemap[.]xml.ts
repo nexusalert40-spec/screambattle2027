@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const ORIGIN = "https://screambattle2027.lovable.app";
+const ORIGIN = "https://screambattle.fun";
 // Add every new public page here so it appears in the sitemap.
 const PUBLIC_PATHS = ["/"];
 
