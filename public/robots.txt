@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://screambattle2027.lovable.app/sitemap.xml
+Sitemap: https://screambattle.fun/sitemap.xml

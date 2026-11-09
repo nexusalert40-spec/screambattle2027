@@ -14,3 +14,7 @@
 - [x] PayPal checkout with server-side verification
 - [ ] PayPal API keys (waiting on owner: PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_ENV)
 - [ ] Google Pay merchant account
+
+## Custom-domain indexing
+- [x] Align homepage canonical, social URL, sitemap and robots with the primary custom domain
+- [ ] Publish the corrected indexing settings (requires owner's publishing approval), then resubmit sitemap and request Google validation
