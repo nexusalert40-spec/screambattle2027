@@ -47,7 +47,7 @@ export function applause(on: boolean, seconds = 1.6) {
   if (!on) return;
   for (let t = 0; t < seconds; t += 0.035) clap(t + Math.random() * 0.03, 0.12 + Math.random() * 0.15 * (1 - t / seconds));
 }
-const VOICE_LANG: Record<string, string> = { ar: "ar-SA", en: "en-US", ru: "ru-RU", zh: "zh-CN", tr: "tr-TR", es: "es-ES", ms: "ms-MY", ur: "ur-PK" };
+const VOICE_LANG: Record<string, string> = { ar: "ar-SA", en: "en-US", ru: "ru-RU", zh: "zh-CN", tr: "tr-TR", es: "es-ES", ms: "ms-MY", ur: "ur-PK", ja: "ja-JP" };
 /** Speaks a short cheer with the device voice, in the player's language. */
 export function say(on: boolean, phrase: string, lang: string) {
   if (!on || typeof window === "undefined" || !("speechSynthesis" in window)) return;

@@ -112,6 +112,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     try {
       const { entitlements: _e, ...rest } = n;
       localStorage.setItem(KEY, JSON.stringify(rest));
+      window.dispatchEvent(new Event("sb-lang"));
     } catch {}
   };
   const set = useCallback((p: Partial<Settings>) => setS((o) => { const n = { ...o, ...p }; persist(n); return n; }), []);
