@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
+import { useSiteText, type SiteKey } from "@/game/siteText";
 
 export const CONTACT_EMAIL = "screambattle050@gmail.com";
 
@@ -22,44 +23,58 @@ export function pageHead(path: string, title: string, description: string) {
 }
 
 export function SiteLinks() {
+  const { t, dir } = useSiteText();
   const cls = "underline-offset-2 hover:underline";
   return (
-    <nav aria-label="Site" className="flex flex-wrap justify-center gap-x-4 gap-y-1 py-4 text-sm text-muted-foreground">
-      <Link to="/contact" className={cls}>Contact us · اتصل بنا</Link>
-      <Link to="/privacy" className={cls}>Privacy · الخصوصية</Link>
-      <Link to="/terms" className={cls}>Terms · الشروط</Link>
-      <Link to="/report" className={cls}>Report · الإبلاغ</Link>
+    <nav aria-label="Site" dir={dir} className="flex flex-wrap justify-center gap-x-4 gap-y-1 py-4 text-sm text-muted-foreground">
+      <Link to="/contact" className={cls}>{t("navContact")}</Link>
+      <Link to="/privacy" className={cls}>{t("navPrivacy")}</Link>
+      <Link to="/terms" className={cls}>{t("navTerms")}</Link>
+      <Link to="/report" className={cls}>{t("navReport")}</Link>
     </nav>
   );
 }
 
-export function InfoPage({ title, arTitle, children }: { title: string; arTitle: string; children: ReactNode }) {
+const Mail = () => <a className="underline" dir="ltr" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>;
+
+/** Sections: [heading key | null, text key, append email?] */
+export function InfoPage({ titleKey, sections, children }: { titleKey: SiteKey; sections: [SiteKey | null, SiteKey, boolean?][]; children?: ReactNode }) {
+  const { t, dir, lang } = useSiteText();
+  useEffect(() => { document.documentElement.lang = lang; document.documentElement.dir = dir; }, [lang, dir]);
   return (
-    <main className="mx-auto min-h-screen max-w-2xl bg-background px-5 py-8 text-foreground">
-      <Link to="/" className="text-sm font-bold text-primary">← Screambattle</Link>
-      <h1 className="mt-4 text-3xl font-black">{title}</h1>
-      <p className="mb-6 text-xl font-bold text-muted-foreground" dir="rtl">{arTitle}</p>
-      <div className="space-y-4 leading-relaxed [&_h2]:mt-6 [&_h2]:text-lg [&_h2]:font-bold">{children}</div>
+    <main dir={dir} className="mx-auto min-h-screen max-w-2xl bg-background px-5 py-8 text-foreground">
+      <Link to="/" className="text-sm font-bold text-primary">{t("back")}</Link>
+      <h1 className="mb-6 mt-4 text-3xl font-black">{t(titleKey)}</h1>
+      <div className="space-y-4 leading-relaxed [&_h2]:mt-6 [&_h2]:text-lg [&_h2]:font-bold">
+        {sections.map(([h, p, mail]) => (
+          <section key={p}>
+            {h && <h2>{t(h)}</h2>}
+            <p>{t(p)}{mail && <> <Mail />.</>}</p>
+          </section>
+        ))}
+        {children}
+      </div>
       <SiteLinks />
     </main>
   );
 }
 
-export function MailForm({ subject, label }: { subject: string; label: string }) {
+export function MailForm({ subject, labelKey }: { subject: string; labelKey: SiteKey }) {
+  const { t } = useSiteText();
   return (
     <form
       className="space-y-3"
       onSubmit={(e) => {
         e.preventDefault();
         const f = new FormData(e.currentTarget);
-        const body = `${String(f.get("message") ?? "").slice(0, 3000)}\n\nFrom: ${String(f.get("email") ?? "").slice(0, 200)}`;
+        const body = `${String(f.get("message") ?? "").slice(0, 3000)}\n\n${t("formFrom")}: ${String(f.get("email") ?? "").slice(0, 200)}`;
         window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       }}
     >
-      <input name="email" type="email" required maxLength={200} placeholder="Your email · بريدك" className="w-full rounded-xl border-2 border-border bg-card p-3" />
-      <textarea name="message" required maxLength={3000} rows={6} placeholder={label} className="w-full rounded-xl border-2 border-border bg-card p-3" />
-      <button className="rounded-xl bg-primary px-5 py-3 font-bold text-primary-foreground">Send · إرسال</button>
-      <p className="text-sm text-muted-foreground">Or email us directly: <a className="underline" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+      <input name="email" type="email" required maxLength={200} placeholder={t("formEmail")} className="w-full rounded-xl border-2 border-border bg-card p-3" />
+      <textarea name="message" required maxLength={3000} rows={6} placeholder={t(labelKey)} className="w-full rounded-xl border-2 border-border bg-card p-3" />
+      <button className="rounded-xl bg-primary px-5 py-3 font-bold text-primary-foreground">{t("formSend")}</button>
+      <p className="text-sm text-muted-foreground">{t("formDirect")} <Mail /></p>
     </form>
   );
 }
