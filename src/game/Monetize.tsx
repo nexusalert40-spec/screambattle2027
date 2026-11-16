@@ -13,6 +13,7 @@ import { Avatar, CharTile, GameButton, Screen } from "./ui";
 import { applause, say, sfx } from "./sfx";
 import { capturePaypalOrder, createPaypalOrder } from "./payments.functions";
 import { detectPlatform } from "./billing";
+import { GooglePayOption } from "./GooglePayOption";
 
 /* ---------- Pay-to-register checkout ---------- */
 export interface CheckoutItem { id: string; name: string; price: string }
@@ -109,9 +110,6 @@ function PayStep({ item }: { item: CheckoutItem }) {
       ) : (
         <button onClick={start} disabled={state === "busy"} className="btn-game flex items-center justify-center gap-2 bg-sun-grad py-3 text-lg">{t("payPayPalGo")}</button>
       )}
-      <button disabled aria-disabled className="btn-game flex cursor-not-allowed items-center justify-center gap-2 bg-ink py-3 text-lg text-card opacity-60">
-        <span className="font-sans font-black">G</span> {t("gpaySoon")}
-      </button>
       {err && <p role="alert" className="rounded-2xl bg-muted p-3 text-sm font-bold">{err}</p>}
     </div>
   );
@@ -122,6 +120,7 @@ function Checkout({ item, onClose }: { item: CheckoutItem; onClose: () => void }
   return (
     <Sheet title={g.user ? item.name : g.t("signUpTitle")} onClose={onClose}>
       <p className="mb-4 inline-block rounded-full border-2 border-ink bg-sun px-3 py-1 font-display text-xl">{item.name} · {item.price}</p>
+      <GooglePayOption />
       {g.user ? <PayStep item={item} /> : <AuthStep />}
     </Sheet>
   );
@@ -242,6 +241,7 @@ export function PremiumScreen({ onBack }: { onBack: () => void }) {
       {g.entitlements.includes(PREMIUM_ALL)
         ? <p className="title-white mt-5 text-center text-2xl">{g.t("owned")}</p>
         : <GameButton className="mt-5 w-full py-4 text-3xl" onClick={() => co.open({ id: PREMIUM_ALL, name: g.t("premiumTitle"), price: PRICES.premium })}>{g.t("unlockAll")} · {PRICES.premium}</GameButton>}
+      {!g.entitlements.includes(PREMIUM_ALL) && <GooglePayOption />}
       {co.sheet}
     </Screen>
   );
@@ -265,6 +265,7 @@ export function Shop({ onBack, onPremium }: { onBack: () => void; onPremium: () 
         <span className="min-w-0 flex-1"><span className="title-white block text-2xl leading-tight">{g.t("goPremium")}</span><span className="block text-xs font-bold text-card">{g.t("premiumChars")} · {g.t("premiumRooms")} · {g.t("premiumNoAds")}</span></span>
         <span className="rounded-full border-2 border-ink bg-sun px-2 py-0.5 font-display">{PRICES.premium}</span>
       </button>
+      <GooglePayOption />
       <div role="tablist" className="mb-4 grid grid-cols-4 gap-1.5">
         {tabs.map(([k, l]) => (
           <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`btn-game min-w-0 truncate px-1 py-2 text-sm ${tab === k ? "bg-sun-grad" : "bg-card"}`}>{l}</button>
