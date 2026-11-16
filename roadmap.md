@@ -18,3 +18,7 @@
 ## Custom-domain indexing
 - [x] Align homepage canonical, social URL, sitemap and robots with the primary custom domain
 - [ ] Publish the corrected indexing settings (requires owner's publishing approval), then resubmit sitemap and request Google validation
+
+## Google Pay visibility
+- [x] Display official Google Pay button and mark in the shop, Premium page and checkout before and after sign-in
+- [ ] Enable Google Pay transactions (requires merchant approval and verified payment gateway)
